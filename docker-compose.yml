@@ -1,0 +1,35 @@
+name: docker-compose
+services:
+  database:
+    container_name: database-mysql
+    image: mysql:8.0.40-debian
+    environment:
+      - MYSQL_ROOT_PASSWORD12345
+      - MYSQL_DATABASE=core_db
+      - MYSQL_DATABASE=auth_db
+    ports:
+      - "8000:3306"
+
+  core:
+    container_name: core-service
+    build:
+      context: ./core-service
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - microservice_networks
+
+  auth:
+    container_name: auth-service
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    networks:
+      - microservice_networks
+
+networks:
+  microservice_networks:
+    driver: bridge
