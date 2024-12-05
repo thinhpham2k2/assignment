@@ -7,7 +7,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Nationalized;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity(name = "Supplier")
 @Table(name = "tbl_supplier")
-public class Supplier {
+public class Supplier implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,9 +31,11 @@ public class Supplier {
     @Column(name = "supplier_name")
     private String supplierName;
 
+    @CreatedDate
     @Column(name = "date_created")
     private LocalDateTime dateCreated;
 
+    @LastModifiedDate
     @Column(name = "date_updated")
     private LocalDateTime dateUpdated;
 

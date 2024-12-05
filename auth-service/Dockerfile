@@ -4,6 +4,7 @@ LABEL authors="ctv"
 WORKDIR /app
 COPY . ./auth
 WORKDIR /app/auth
+ENV DB_URL=jdbc:mysql://host.docker.internal:3306/auth_db
 RUN mvn clean package
 
 # Stage 2: Use OpenJDK for running

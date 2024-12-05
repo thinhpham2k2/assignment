@@ -4,19 +4,33 @@ services:
     container_name: database-mysql
     image: mysql:8.0.40-debian
     environment:
-      - MYSQL_ROOT_PASSWORD12345
-      - MYSQL_DATABASE=core_db
-      - MYSQL_DATABASE=auth_db
+      - MYSQL_ROOT_PASSWORD=12345
     ports:
       - "8000:3306"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "database-mysql" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - microservice_networks
 
   core:
     container_name: core-service
     build:
       context: ./core-service
       dockerfile: Dockerfile
+    environment:
+      - DB_USERNAME=root
+      - DB_PASSWORD=12345
+      - DB_URL=jdbc:mysql://database:3306/core_db
     ports:
       - "8080:8080"
+    depends_on:
+      database:
+        condition: service_healthy
     networks:
       - microservice_networks
 
@@ -25,8 +39,15 @@ services:
     build:
       context: ./auth-service
       dockerfile: Dockerfile
+    environment:
+      - DB_USERNAME=root
+      - DB_PASSWORD=12345
+      - DB_URL=jdbc:mysql://database:3306/auth_db
     ports:
       - "8081:8081"
+    depends_on:
+      database:
+        condition: service_healthy
     networks:
       - microservice_networks
 

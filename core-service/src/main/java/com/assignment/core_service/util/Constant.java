@@ -9,7 +9,6 @@ public class Constant {
     public static final String UPDATE_FAIL = "message.update.fail";
     public static final String DELETE_SUCCESS = "message.delete.success";
     public static final String DELETE_FAIL = "message.delete.fail";
-    public static final String LOGIN_FAIL = "message.login.fail";
     public static final String UNAUTHORIZED = "message.unauthorized";
     public static final String FORBIDDEN = "message.forbidden";
     public static final String INTERNAL_SERVER_ERROR = "message.internal.server.error";

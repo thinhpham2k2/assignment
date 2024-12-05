@@ -7,7 +7,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Nationalized;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -20,7 +25,7 @@ import java.time.LocalDateTime;
         indexes = {
                 @Index(name = "idx_product_name_description", columnList = "product_name, description")
         })
-public class Product {
+public class Product implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,9 +50,11 @@ public class Product {
     @Column(name = "quantity")
     private Integer quantity;
 
+    @CreatedDate
     @Column(name = "date_created")
     private LocalDateTime dateCreated;
 
+    @LastModifiedDate
     @Column(name = "date_updated")
     private LocalDateTime dateUpdated;
 
@@ -71,11 +78,13 @@ public class Product {
     @JoinColumn(name = "supplier_id")
     private Supplier supplier;
 
+    @CreatedBy
     @ManyToOne
     @JsonManagedReference
     @JoinColumn(name = "created_by")
     private Account creator;
 
+    @LastModifiedBy
     @ManyToOne
     @JsonManagedReference
     @JoinColumn(name = "updated_by")

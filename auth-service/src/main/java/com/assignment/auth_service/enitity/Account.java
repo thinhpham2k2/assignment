@@ -1,6 +1,5 @@
-package com.assignment.core_service.enitity;
+package com.assignment.auth_service.enitity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -59,14 +58,6 @@ public class Account implements UserDetails, Serializable {
 
     @Column(name = "status")
     private Boolean status;
-
-    @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY)
-    @JsonBackReference
-    private List<Product> productCreatedList;
-
-    @OneToMany(mappedBy = "updater", fetch = FetchType.LAZY)
-    @JsonBackReference
-    private List<Product> productUpdatedList;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

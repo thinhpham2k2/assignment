@@ -4,6 +4,7 @@ LABEL authors="ctv"
 WORKDIR /app
 COPY . ./core
 WORKDIR /app/core
+ENV DB_URL=jdbc:mysql://host.docker.internal:3306/core_db
 RUN mvn clean package
 
 # Stage 2: Use OpenJDK for running
