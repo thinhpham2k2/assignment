@@ -38,12 +38,14 @@ public class SecurityConfig {
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(
                                 (request, response, authException) -> {
+                                    response.setContentType("text/plain; charset=UTF-8");
                                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                                     response.setHeader("message", "Unauthorized");
                                     response.getWriter().write(
                                             messageSource.getMessage(Constant.UNAUTHORIZED, null, LocaleContextHolder.getLocale()));
                                 }).accessDeniedHandler(
                                 (request, response, accessDeniedException) -> {
+                                    response.setContentType("text/plain; charset=UTF-8");
                                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                                     response.setHeader("message", "Access Denied!");
                                     response.getWriter().write(

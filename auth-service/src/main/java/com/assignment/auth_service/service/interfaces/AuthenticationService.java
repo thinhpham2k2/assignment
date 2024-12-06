@@ -1,8 +1,13 @@
 package com.assignment.auth_service.service.interfaces;
 
-import com.assignment.auth_service.enitity.Account;
+import com.assignment.auth_service.dto.account.AccountDTO;
+import com.assignment.auth_service.dto.account.CreateAccountDTO;
 
 public interface AuthenticationService {
 
-    Account authenticate(String userName, String password);
+    AccountDTO authenticate(String userName, String password);
+
+    AccountDTO register(CreateAccountDTO createDto);
+
+    boolean isDuplicateUsername(String userName);
 }

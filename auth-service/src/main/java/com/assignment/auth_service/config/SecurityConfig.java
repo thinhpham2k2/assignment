@@ -31,19 +31,24 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(AbstractHttpConfigurer::disable).csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(authorize -> authorize.requestMatchers(
-                "/swagger-ui/**", "/v3/api-docs/**").permitAll().anyRequest().authenticated());
+                "/swagger-ui/**","/swagger-resource/**","/swagger-ui.html",
+                "/configuration/ui","/configuration/security",
+                "/v3/api-docs/**", "/api/v1/auth/**").permitAll().anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(
                                 (request, response, authException) -> {
+                                    response.setContentType("text/plain; charset=UTF-8");
                                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                                     response.setHeader("message", "Unauthorized");
                                     response.getWriter().write(
                                             messageSource.getMessage(Constant.UNAUTHORIZED, null, LocaleContextHolder.getLocale()));
-                                }).accessDeniedHandler(
+                                })
+                        .accessDeniedHandler(
                                 (request, response, accessDeniedException) -> {
+                                    response.setContentType("text/plain; charset=UTF-8");
                                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                                     response.setHeader("message", "Access Denied!");
                                     response.getWriter().write(

@@ -1,6 +1,6 @@
 package com.assignment.auth_service.dto.account;
 
-import com.assignment.auth_service.enitity.Role;
+import com.assignment.auth_service.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +17,7 @@ public class AccountDTO implements Serializable {
 
     private Long id;
     private Role role;
+    private String userName;
     private String phone;
     private String email;
     private LocalDateTime dateCreated;

@@ -55,7 +55,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        filterChain.doFilter(request, response);
+        try{
+
+            filterChain.doFilter(request, response);
+        }catch (NoSuchMethodError e){
+
+            System.out.println("HAHAH");
+            System.out.println(e.getMessage());
+        }
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {

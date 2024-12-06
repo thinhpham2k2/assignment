@@ -1,4 +1,4 @@
-package com.assignment.auth_service.enitity;
+package com.assignment.auth_service.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

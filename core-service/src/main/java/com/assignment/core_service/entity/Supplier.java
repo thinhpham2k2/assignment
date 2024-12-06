@@ -1,4 +1,4 @@
-package com.assignment.core_service.enitity;
+package com.assignment.core_service.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -18,9 +18,9 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "Category")
-@Table(name = "tbl_category")
-public class Category implements Serializable {
+@Entity(name = "Supplier")
+@Table(name = "tbl_supplier")
+public class Supplier implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,8 +28,8 @@ public class Category implements Serializable {
     private Long id;
 
     @Nationalized
-    @Column(name = "category_name")
-    private String categoryName;
+    @Column(name = "supplier_name")
+    private String supplierName;
 
     @CreatedDate
     @Column(name = "date_created")
@@ -50,7 +50,7 @@ public class Category implements Serializable {
     @Column(name = "status")
     private Boolean status;
 
-    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY)
     @JsonBackReference
     private List<Product> productList;
 }

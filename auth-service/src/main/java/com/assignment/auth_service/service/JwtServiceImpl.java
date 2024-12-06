@@ -1,5 +1,6 @@
 package com.assignment.auth_service.service;
 
+import com.assignment.auth_service.dto.account.AccountDTO;
 import com.assignment.auth_service.service.interfaces.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -20,14 +21,14 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String generateToken(
             Map<String, Object> extraClaims,
-            UserDetails userDetails) {
+            AccountDTO account) {
 
         SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(JWT_SECRET));
 
         return Jwts
                 .builder()
                 .claims(extraClaims)
-                .subject(userDetails.getUsername())
+                .subject(account.getUserName())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
                 .signWith(secretKey)
