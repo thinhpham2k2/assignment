@@ -11,6 +11,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
         indexes = {
                 @Index(name = "idx_product_name_description", columnList = "product_name, description")
         })
+@EntityListeners(AuditingEntityListener.class)
 public class Product implements Serializable {
 
     @Id
@@ -51,11 +53,11 @@ public class Product implements Serializable {
     private Integer quantity;
 
     @CreatedDate
-    @Column(name = "date_created")
+    @Column(name = "date_created", nullable = false, updatable = false)
     private LocalDateTime dateCreated;
 
     @LastModifiedDate
-    @Column(name = "date_updated")
+    @Column(name = "date_updated", insertable = false)
     private LocalDateTime dateUpdated;
 
     @Nationalized
@@ -81,12 +83,12 @@ public class Product implements Serializable {
     @CreatedBy
     @ManyToOne
     @JsonManagedReference
-    @JoinColumn(name = "created_by")
+    @JoinColumn(name = "created_by", nullable = false, updatable = false)
     private Account creator;
 
     @LastModifiedBy
     @ManyToOne
     @JsonManagedReference
-    @JoinColumn(name = "updated_by")
+    @JoinColumn(name = "updated_by", insertable = false)
     private Account updater;
 }

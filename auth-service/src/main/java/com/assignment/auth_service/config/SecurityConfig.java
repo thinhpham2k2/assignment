@@ -7,6 +7,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,6 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@EnableJpaAuditing
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
@@ -31,9 +33,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(AbstractHttpConfigurer::disable).csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(authorize -> authorize.requestMatchers(
-                "/swagger-ui/**","/swagger-resource/**","/swagger-ui.html",
-                "/configuration/ui","/configuration/security",
-                "/v3/api-docs/**", "/api/v1/auth/**").permitAll().anyRequest().authenticated());
+                "/swagger-ui/**", "/v3/api-docs/**", "/api/v1/auth/**").permitAll().anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

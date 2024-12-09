@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "Account")
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "tbl_account", uniqueConstraints = {@UniqueConstraint(name = "user_name_unique", columnNames = "user_name")})
 public class Account implements UserDetails, Serializable {
 
@@ -46,11 +48,11 @@ public class Account implements UserDetails, Serializable {
     private String email;
 
     @CreatedDate
-    @Column(name = "date_created")
+    @Column(name = "date_created", nullable = false, updatable = false)
     private LocalDateTime dateCreated;
 
     @LastModifiedDate
-    @Column(name = "date_updated")
+    @Column(name = "date_updated", insertable = false)
     private LocalDateTime dateUpdated;
 
     @Column(name = "state")

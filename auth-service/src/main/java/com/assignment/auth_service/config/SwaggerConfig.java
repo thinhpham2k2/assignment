@@ -13,9 +13,10 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("My API")
+                        .title("Authenticate Service")
                         .version("1.0")
-                        .description("Description of my API")
+                        .description("The Authenticate Service is a crucial component of applications, " +
+                                "responsible for verifying the identity of users or systems. ")
                         .contact(new Contact()
                                 .name("thinhpham2k2")
                                 .email("thinhphamquoc9999@gmail.com")));

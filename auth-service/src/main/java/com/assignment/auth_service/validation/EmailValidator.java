@@ -1,8 +1,7 @@
 package com.assignment.auth_service.validation;
 
-import com.assignment.auth_service.service.interfaces.AuthenticationService;
 import com.assignment.auth_service.util.Constant;
-import com.assignment.auth_service.validation.interfaces.UsernameConstraint;
+import com.assignment.auth_service.validation.interfaces.EmailConstraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
@@ -10,14 +9,12 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 @RequiredArgsConstructor
-public class UsernameValidator implements ConstraintValidator<UsernameConstraint, Object> {
+public class EmailValidator implements ConstraintValidator<EmailConstraint, Object> {
 
     private final MessageSource messageSource;
 
-    private final AuthenticationService authenticationService;
-
     @Override
-    public void initialize(UsernameConstraint constraintAnnotation) {
+    public void initialize(EmailConstraint constraintAnnotation) {
 
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
@@ -28,31 +25,22 @@ public class UsernameValidator implements ConstraintValidator<UsernameConstraint
         try {
 
             constraintValidatorContext.disableDefaultConstraintViolation();
-            if (value.toString().matches("[a-z0-9]{3,30}")) {
+            if (value.toString().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
 
-                String userName = value.toString();
-                if (!authenticationService.isDuplicateUsername(userName)) {
-
-                    return true;
-                }
-                constraintValidatorContext
-                        .buildConstraintViolationWithTemplate(messageSource.getMessage
-                                (Constant.INVALID_DUPLICATE_USERNAME, null, LocaleContextHolder.getLocale()))
-                        .addConstraintViolation();
+                return true;
             } else {
 
                 constraintValidatorContext
                         .buildConstraintViolationWithTemplate(messageSource.getMessage
-                                (Constant.INVALID_FORMAT_USERNAME, null, LocaleContextHolder.getLocale()))
+                                (Constant.INVALID_FORMAT_EMAIL, null, LocaleContextHolder.getLocale()))
                         .addConstraintViolation();
             }
-
             return false;
         } catch (Exception e) {
 
             constraintValidatorContext
                     .buildConstraintViolationWithTemplate(messageSource.getMessage
-                            (Constant.INVALID_USERNAME, null, LocaleContextHolder.getLocale()))
+                            (Constant.INVALID_EMAIL, null, LocaleContextHolder.getLocale()))
                     .addConstraintViolation();
             return false;
         }

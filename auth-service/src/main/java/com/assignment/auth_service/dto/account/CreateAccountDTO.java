@@ -1,5 +1,6 @@
 package com.assignment.auth_service.dto.account;
 
+import com.assignment.auth_service.validation.interfaces.EmailConstraint;
 import com.assignment.auth_service.validation.interfaces.UsernameConstraint;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -8,11 +9,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateAccountDTO {
+public class CreateAccountDTO implements Serializable {
 
     @NotNull(message = "User name is required")
     @UsernameConstraint
@@ -26,5 +29,7 @@ public class CreateAccountDTO {
     @Size(min = 7, max = 20, message = "The length of phone is from 8 to 20 characters")
     private String phone;
 
+    @NotNull
+    @EmailConstraint
     private String email;
 }

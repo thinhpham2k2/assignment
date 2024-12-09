@@ -13,4 +13,6 @@ public class Constant {
     public static final String INVALID_USERNAME = "message.invalid.username";
     public static final String INVALID_DUPLICATE_USERNAME = "message.duplicate.username";
     public static final String INVALID_FORMAT_USERNAME = "message.invalid.format.username";
+    public static final String INVALID_EMAIL = "message.invalid.email";
+    public static final String INVALID_FORMAT_EMAIL = "message.invalid.format.email";
 }

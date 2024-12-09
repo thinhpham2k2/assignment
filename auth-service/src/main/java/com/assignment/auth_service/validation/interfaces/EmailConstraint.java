@@ -1,6 +1,6 @@
 package com.assignment.auth_service.validation.interfaces;
 
-import com.assignment.auth_service.validation.UsernameValidator;
+import com.assignment.auth_service.validation.EmailValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -14,10 +14,10 @@ import java.lang.annotation.*;
         ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Constraint(validatedBy = UsernameValidator.class)
-public @interface UsernameConstraint {
+@Constraint(validatedBy = EmailValidator.class)
+public @interface EmailConstraint {
 
-    String message() default "Invalid user name";
+    String message() default "Invalid email";
 
     Class<?>[] groups() default {};
 

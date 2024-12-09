@@ -11,6 +11,7 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface AccountMapper {
 
+    @Mapping(target = "userName", source = "username")
     AccountDTO entityToDTO(Account entity);
 
     @Mapping(target = "role", expression = "java(mapRole())")

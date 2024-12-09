@@ -34,7 +34,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userName, password));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return (AccountDTO) authentication.getPrincipal();
+        return accountMapper.entityToDTO((Account) authentication.getPrincipal());
     }
 
     @Override
@@ -42,6 +42,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         createDto.setPassword(passwordEncoder.encode(createDto.getPassword()));
         Account account = accountRepository.save(accountMapper.createToEntity(createDto));
+        account.setDateUpdated(null);
         return accountMapper.entityToDTO(account);
     }
 
