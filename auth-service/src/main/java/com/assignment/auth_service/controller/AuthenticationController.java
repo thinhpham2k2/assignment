@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -45,7 +46,9 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "200", description = "Success", content =
                     {@Content(mediaType = "application/json", schema =
                     @Schema(implementation = JwtResponseDTO.class))}),
-            @ApiResponse(responseCode = "400", description = "Fail", content =
+            @ApiResponse(responseCode = "400", description = "Bad Request", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content =
                     {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
     })
     public ResponseEntity<?> register(
@@ -57,10 +60,10 @@ public class AuthenticationController {
         if (account != null) {
 
             JwtResponseDTO jwtResponseDTO = new JwtResponseDTO(token, account);
-            return ResponseEntity.ok().body(jwtResponseDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(jwtResponseDTO);
         } else {
 
-            return ResponseEntity.badRequest().contentType(MediaType.TEXT_PLAIN).body(
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.TEXT_PLAIN).body(
                     messageSource.getMessage(Constant.REGISTER_FAIL, null, LocaleContextHolder.getLocale()));
         }
     }
@@ -71,11 +74,13 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "200", description = "Success", content =
                     {@Content(mediaType = "application/json", schema =
                     @Schema(implementation = JwtResponseDTO.class))}),
-            @ApiResponse(responseCode = "400", description = "Fail", content =
+            @ApiResponse(responseCode = "400", description = "Bad Request", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content =
                     {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
     })
     public ResponseEntity<?> authenticate(
-            @RequestBody @Validated LoginFormDTO request
+            @RequestBody LoginFormDTO request
     ) throws MethodArgumentTypeMismatchException {
 
         String userName = request.getUserName();
@@ -83,13 +88,13 @@ public class AuthenticationController {
 
         if (userName == null || userName.isEmpty()) {
 
-            return ResponseEntity.badRequest().contentType(MediaType.TEXT_PLAIN).body(
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.TEXT_PLAIN).body(
                     messageSource.getMessage(Constant.USERNAME_MISSING, null, LocaleContextHolder.getLocale()));
         }
 
         if (password == null || password.isEmpty()) {
 
-            return ResponseEntity.badRequest().contentType(MediaType.TEXT_PLAIN).body(
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.TEXT_PLAIN).body(
                     messageSource.getMessage(Constant.PASSWORD_MISSING, null, LocaleContextHolder.getLocale()));
         }
         try {
@@ -99,15 +104,15 @@ public class AuthenticationController {
             if (account != null) {
 
                 JwtResponseDTO jwtResponseDTO = new JwtResponseDTO(token, account);
-                return ResponseEntity.ok().body(jwtResponseDTO);
+                return ResponseEntity.status(HttpStatus.OK).body(jwtResponseDTO);
             } else {
 
-                return ResponseEntity.badRequest().contentType(MediaType.TEXT_PLAIN).body(
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.TEXT_PLAIN).body(
                         messageSource.getMessage(Constant.LOGIN_FAIL, null, LocaleContextHolder.getLocale()));
             }
         } catch (Exception e) {
 
-            return ResponseEntity.badRequest().contentType(MediaType.TEXT_PLAIN).body(
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.TEXT_PLAIN).body(
                     messageSource.getMessage(Constant.LOGIN_FAIL, null, LocaleContextHolder.getLocale()));
         }
     }

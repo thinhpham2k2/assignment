@@ -16,7 +16,7 @@ public class SwaggerConfig {
                         .title("Authenticate Service")
                         .version("1.0")
                         .description("The Authenticate Service is a crucial component of applications, " +
-                                "responsible for verifying the identity of users or systems. ")
+                                "responsible for verifying the identity of users or systems")
                         .contact(new Contact()
                                 .name("thinhpham2k2")
                                 .email("thinhphamquoc9999@gmail.com")));

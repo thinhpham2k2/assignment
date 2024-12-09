@@ -1,6 +1,8 @@
 package com.assignment.auth_service.util;
 
-public class Constant {
+import java.io.Serializable;
+
+public class Constant implements Serializable {
 
     public static final String USERNAME_MISSING = "message.username.missing";
     public static final String PASSWORD_MISSING = "message.password.missing";
@@ -15,4 +17,10 @@ public class Constant {
     public static final String INVALID_FORMAT_USERNAME = "message.invalid.format.username";
     public static final String INVALID_EMAIL = "message.invalid.email";
     public static final String INVALID_FORMAT_EMAIL = "message.invalid.format.email";
+    public static final String USERNAME_REQUIRE = "message.username.require";
+    public static final String PASSWORD_REQUIRE = "message.password.require";
+    public static final String PHONE_REQUIRE = "message.phone.require";
+    public static final String EMAIL_REQUIRE = "message.email.require";
+    public static final String PASSWORD_SIZE = "message.password.size";
+    public static final String PHONE_SIZE = "message.phone.size";
 }

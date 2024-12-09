@@ -50,7 +50,7 @@ public class SecurityConfig {
                                 (request, response, accessDeniedException) -> {
                                     response.setContentType("text/plain; charset=UTF-8");
                                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                                    response.setHeader("message", "Access Denied!");
+                                    response.setHeader("message", "Access Denied");
                                     response.getWriter().write(
                                             messageSource.getMessage(Constant.FORBIDDEN, null, LocaleContextHolder.getLocale()));
                                 }));

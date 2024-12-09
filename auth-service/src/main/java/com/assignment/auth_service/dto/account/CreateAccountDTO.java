@@ -17,19 +17,19 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class CreateAccountDTO implements Serializable {
 
-    @NotNull(message = "User name is required")
+    @NotNull(message = "{message.username.require}")
     @UsernameConstraint
     private String userName;
 
-    @NotNull(message = "Password is required")
-    @Size(min = 2, max = 100, message = "The length of password is from 2 to 100 characters")
+    @NotNull(message = "{message.password.require}")
+    @Size(min = 2, max = 100, message = "{message.password.size}")
     private String password;
 
-    @NotNull(message = "Phone is required")
-    @Size(min = 7, max = 20, message = "The length of phone is from 8 to 20 characters")
+    @NotNull(message = "{message.phone.require}")
+    @Size(min = 7, max = 20, message = "{message.phone.size}")
     private String phone;
 
-    @NotNull
+    @NotNull(message = "{message.email.require}")
     @EmailConstraint
     private String email;
 }

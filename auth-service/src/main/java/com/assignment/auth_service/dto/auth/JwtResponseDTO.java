@@ -13,6 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JwtResponseDTO implements Serializable {
+
     private String token;
     private AccountDTO user;
 }
