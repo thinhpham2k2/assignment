@@ -33,7 +33,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(AbstractHttpConfigurer::disable).csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(authorize -> authorize.requestMatchers(
-                "/swagger-ui/**", "/v3/api-docs/**", "/api/v1/auth/**").permitAll().anyRequest().authenticated());
+                "/swagger/**", "/swagger-ui/**", "/v3/api-docs/**", "/api/v1/auth/**").permitAll().anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
