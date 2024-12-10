@@ -12,7 +12,7 @@
     <artifactId>core-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>core-service</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Core Service REST API</description>
     <url/>
     <licenses>
         <license/>

@@ -11,7 +11,7 @@ RUN mvn clean package
 FROM openjdk:24-slim-bullseye
 WORKDIR /app
 COPY --from=build /app/core/target/*.jar app.jar
-EXPOSE 8080
+EXPOSE 8082
 ENTRYPOINT ["java", "-jar", "app.jar"]
 
 # Build command: docker build -t core_image .
