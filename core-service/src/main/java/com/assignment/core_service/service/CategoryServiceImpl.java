@@ -13,16 +13,18 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -52,7 +54,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Page<CategoryDTO> findAllByCondition(String search, String sort, int page, int limit) {
+    public PagedModel<CategoryDTO> findAllByCondition(String search, String sort, int page, int limit) {
 
         if (page < 0) throw new InvalidParameterException(
                 messageSource.getMessage(Constant.INVALID_PAGE_NUMBER, null, LocaleContextHolder.getLocale()));
@@ -75,18 +77,13 @@ public class CategoryServiceImpl implements CategoryService {
         Pageable pageable = PageRequest.of(page, limit).withSort(Sort.by(order));
         Page<Category> pageResult = categoryRepository.findAllByCondition(true, search, pageable);
 
-        return new PageImpl<>(pageResult.getContent().stream()
-                .map(categoryMapper::entityToDTO)
-                .collect(Collectors.toList()), pageResult.getPageable(), pageResult.getTotalElements());
+        return new PagedModel<>(pageResult.map(categoryMapper::entityToDTO));
     }
 
     @Override
-    public void create(CreateCategoryDTO create) throws SQLException {
+    public void create(CreateCategoryDTO create){
 
-        Category category = categoryMapper.createToEntity(create);
-
-        if (category == null) throw new SQLException(
-                messageSource.getMessage(Constant.CREATE_FAIL, null, LocaleContextHolder.getLocale()));
+        categoryRepository.save(categoryMapper.createToEntity(create));
     }
 
     @Override

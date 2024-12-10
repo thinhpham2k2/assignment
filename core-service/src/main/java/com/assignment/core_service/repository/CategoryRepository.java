@@ -18,7 +18,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     @Query("SELECT c FROM Category c " +
             "WHERE c.status = ?1 " +
-            "AND c.categoryName LIKE %?2% " +
-            "OR c. description LIKE %?2%")
+            "AND (c.categoryName LIKE %?2% " +
+            "OR c. description LIKE %?2%)")
     Page<Category> findAllByCondition(boolean status, String search, Pageable pageable);
 }

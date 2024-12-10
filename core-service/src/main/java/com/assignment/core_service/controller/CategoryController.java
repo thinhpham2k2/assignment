@@ -1,6 +1,8 @@
 package com.assignment.core_service.controller;
 
 import com.assignment.core_service.dto.category.CategoryDTO;
+import com.assignment.core_service.dto.category.CreateCategoryDTO;
+import com.assignment.core_service.dto.category.UpdateCategoryDTO;
 import com.assignment.core_service.service.interfaces.CategoryService;
 import com.assignment.core_service.util.Constant;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,37 +15,33 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.util.Optional;
-
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "\uD83C\uDFF7\uFE0F Category API")
+@Tag(name = "\uD83C\uDFF7️ Category API")
 @RequestMapping("/api/v1/categories")
 @SecurityRequirement(name = "Authorization")
 public class CategoryController {
-
-    public static final String ADMIN = "ROLE_ADMIN";
-
-    public static final String CUSTOMER = "ROLE_CUSTOMER";
 
     private final MessageSource messageSource;
 
     private final CategoryService categoryService;
 
     @GetMapping("")
-    @Secured({ADMIN, CUSTOMER})
+    @Secured({Constant.ADMIN, Constant.CUSTOMER})
     @Operation(summary = "Get category list")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success", content =
                     {@Content(mediaType = "application/json", schema =
-                    @Schema(implementation = CategoryDTO.class))}),
+                    @Schema(implementation = PagedModel.class))}),
             @ApiResponse(responseCode = "400", description = "Bad Request", content =
                     {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content =
@@ -61,20 +59,20 @@ public class CategoryController {
                                      @RequestParam(defaultValue = "10") Integer limit)
             throws MethodArgumentTypeMismatchException {
 
-        Page<CategoryDTO> list = categoryService.findAllByCondition(search, sort, page, limit);
+        PagedModel<CategoryDTO> list = categoryService.findAllByCondition(search, sort, page, limit);
 
         if (!list.getContent().isEmpty()) {
 
             return ResponseEntity.status(HttpStatus.OK).body(list);
         } else {
 
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.TEXT_PLAIN).body(
                     messageSource.getMessage(Constant.NOT_FOUND, null, LocaleContextHolder.getLocale()));
         }
     }
 
     @GetMapping("/{id}")
-    @Secured({ADMIN, CUSTOMER})
+    @Secured({Constant.ADMIN, Constant.CUSTOMER})
     @Operation(summary = "Get category by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success", content =
@@ -91,7 +89,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content =
                     {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
     })
-    public ResponseEntity<?> getProductById(@PathVariable(value = "id") Long id)
+    public ResponseEntity<?> getById(@PathVariable(value = "id") Long id)
             throws MethodArgumentTypeMismatchException {
 
         CategoryDTO category = categoryService.findById(id);
@@ -101,8 +99,81 @@ public class CategoryController {
             return ResponseEntity.status(HttpStatus.OK).body(category);
         } else {
 
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.TEXT_PLAIN).body(
                     messageSource.getMessage(Constant.NOT_FOUND, null, LocaleContextHolder.getLocale()));
         }
+    }
+
+    @PostMapping(value = "")
+    @Secured({Constant.ADMIN})
+    @Operation(summary = "Create category")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Created", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "403", description = "Access Denied", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+    })
+    public ResponseEntity<?> create(@RequestBody @Validated CreateCategoryDTO create)
+            throws MethodArgumentTypeMismatchException {
+
+        categoryService.create(create);
+
+        return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.TEXT_PLAIN).body(
+                messageSource.getMessage(Constant.CREATE_SUCCESS, null, LocaleContextHolder.getLocale()));
+    }
+
+    @PutMapping("/{id}")
+    @Secured({Constant.ADMIN})
+    @Operation(summary = "Update category")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "403", description = "Access Denied", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+    })
+    public ResponseEntity<?> update(@PathVariable(value = "id") Long id,
+                                    @RequestBody @Validated UpdateCategoryDTO update)
+            throws MethodArgumentTypeMismatchException {
+
+        categoryService.update(update, id);
+
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.TEXT_PLAIN).body(
+                messageSource.getMessage(Constant.UPDATE_SUCCESS, null, LocaleContextHolder.getLocale()));
+    }
+
+    @DeleteMapping("/{id}")
+    @Secured({Constant.ADMIN})
+    @Operation(summary = "Delete category")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "No Content", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "400", description = "Fail", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "403", description = "Access Denied", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+    })
+    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id)
+            throws MethodArgumentTypeMismatchException {
+
+        categoryService.delete(id);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).contentType(MediaType.TEXT_PLAIN).body(
+                messageSource.getMessage(Constant.DELETE_SUCCESS, null, LocaleContextHolder.getLocale()));
     }
 }

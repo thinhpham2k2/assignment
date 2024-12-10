@@ -19,8 +19,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableJpaAuditing
 @EnableWebSecurity
-@EnableMethodSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
     private final MessageSource messageSource;
@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(
                                 (request, response, authException) -> {
+
                                     response.setContentType("text/plain; charset=UTF-8");
                                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                                     response.setHeader("message", "Unauthorized");
@@ -48,6 +49,7 @@ public class SecurityConfig {
                                 })
                         .accessDeniedHandler(
                                 (request, response, accessDeniedException) -> {
+
                                     response.setContentType("text/plain; charset=UTF-8");
                                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                                     response.setHeader("message", "Access Denied");
