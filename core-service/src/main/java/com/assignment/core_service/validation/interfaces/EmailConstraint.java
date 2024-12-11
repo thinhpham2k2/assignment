@@ -1,5 +1,6 @@
 package com.assignment.core_service.validation.interfaces;
 
+import com.assignment.core_service.util.Constant;
 import com.assignment.core_service.validation.EmailValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -17,7 +18,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = EmailValidator.class)
 public @interface EmailConstraint {
 
-    String message() default "{message.invalid.email}";
+    String message() default "{" + Constant.INVALID_EMAIL + "}";
 
     Class<?>[] groups() default {};
 

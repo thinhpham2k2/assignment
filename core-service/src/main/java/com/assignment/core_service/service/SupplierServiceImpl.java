@@ -83,7 +83,14 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     public void create(CreateSupplierDTO create) {
 
-        supplierRepository.save(supplierMapper.createToEntity(create));
+        try {
+
+            supplierRepository.save(supplierMapper.createToEntity(create));
+        } catch (Exception e) {
+
+            throw new InvalidParameterException(
+                    messageSource.getMessage(Constant.CREATE_FAIL, null, LocaleContextHolder.getLocale()));
+        }
     }
 
     @Override

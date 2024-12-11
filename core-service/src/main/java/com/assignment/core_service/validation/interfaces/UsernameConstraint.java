@@ -1,5 +1,6 @@
 package com.assignment.core_service.validation.interfaces;
 
+import com.assignment.core_service.util.Constant;
 import com.assignment.core_service.validation.UsernameValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -17,7 +18,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = UsernameValidator.class)
 public @interface UsernameConstraint {
 
-    String message() default "{message.invalid.username}";
+    String message() default "{" + Constant.INVALID_USERNAME + "}";
 
     Class<?>[] groups() default {};
 

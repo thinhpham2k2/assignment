@@ -26,6 +26,7 @@ public class Constant implements Serializable {
     public static final String PASSWORD_REQUIRE = "message.password.require";
     public static final String PHONE_REQUIRE = "message.phone.require";
     public static final String EMAIL_REQUIRE = "message.email.require";
+    public static final String ROLE_REQUIRE = "message.role.require";
     public static final String PASSWORD_SIZE = "message.password.size";
     public static final String PHONE_SIZE = "message.phone.size";
     public static final String CATEGORY_NAME_REQUIRE = "message.category.name.require";
@@ -41,10 +42,11 @@ public class Constant implements Serializable {
     public static final String INVALID_PRICE = "message.invalid.price";
     public static final String INVALID_WEIGHT = "message.invalid.weight";
     public static final String INVALID_QUANTITY = "message.invalid.quantity";
-    public static final String PRODUCT_DESCRIPTION_REQUIRE = "message.product.description.size";
+    public static final String PRODUCT_DESCRIPTION_SIZE = "message.product.description.size";
     public static final String INVALID_CATEGORY = "message.invalid.category";
     public static final String INVALID_SUPPLIER = "message.invalid.supplier";
     public static final String INVALID_PAGE_NUMBER = "message.invalid.page.number";
     public static final String INVALID_PAGE_SIZE = "message.invalid.page.size";
     public static final String INVALID_PROPERTY = "message.invalid.property";
+    public static final String INVALID_ACCOUNT = "message.invalid.account";
 }

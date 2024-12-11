@@ -19,6 +19,6 @@ public interface SupplierRepository  extends JpaRepository<Supplier, Long> {
     @Query("SELECT s FROM Supplier s " +
             "WHERE s.status = ?1 " +
             "AND (s.supplierName LIKE %?2% " +
-            "OR s. description LIKE %?2%)")
+            "OR s.description LIKE %?2%)")
     Page<Supplier> findAllByCondition(boolean status, String search, Pageable pageable);
 }

@@ -1,5 +1,7 @@
 package com.assignment.core_service.dto.account;
 
+import com.assignment.core_service.entity.Role;
+import com.assignment.core_service.util.Constant;
 import com.assignment.core_service.validation.interfaces.EmailConstraint;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -16,11 +18,14 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class UpdateAccountDTO implements Serializable {
 
-    @NotNull(message = "{message.phone.require}")
-    @Size(min = 7, max = 20, message = "{message.phone.size}")
+    @NotNull(message = "{" + Constant.ROLE_REQUIRE + "}")
+    private Role role;
+
+    @NotNull(message = "{" + Constant.PHONE_REQUIRE + "}")
+    @Size(min = 7, max = 20, message = "{" + Constant.PHONE_SIZE + "}")
     private String phone;
 
-    @NotNull(message = "{message.email.require}")
+    @NotNull(message = "{" + Constant.EMAIL_REQUIRE + "}")
     @EmailConstraint
     private String email;
 

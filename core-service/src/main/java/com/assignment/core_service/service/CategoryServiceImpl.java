@@ -81,9 +81,16 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void create(CreateCategoryDTO create){
+    public void create(CreateCategoryDTO create) {
 
-        categoryRepository.save(categoryMapper.createToEntity(create));
+        try {
+
+            categoryRepository.save(categoryMapper.createToEntity(create));
+        } catch (Exception e) {
+
+            throw new InvalidParameterException(
+                    messageSource.getMessage(Constant.CREATE_FAIL, null, LocaleContextHolder.getLocale()));
+        }
     }
 
     @Override

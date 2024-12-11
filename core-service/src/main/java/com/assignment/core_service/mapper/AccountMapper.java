@@ -23,6 +23,8 @@ public interface AccountMapper {
     @Mapping(target = "status", expression = "java(true)")
     Account createToEntity(CreateAccountDTO create);
 
+    @Mapping(target = "productCreatedList", ignore = true)
+    @Mapping(target = "productUpdatedList", ignore = true)
     Account updateToEntity(UpdateAccountDTO update, @MappingTarget Account entity);
 
     @Named("mapRole")

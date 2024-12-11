@@ -1,5 +1,6 @@
 package com.assignment.core_service.validation.interfaces;
 
+import com.assignment.core_service.util.Constant;
 import com.assignment.core_service.validation.CategoryValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -17,7 +18,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = CategoryValidator.class)
 public @interface CategoryConstraint {
 
-    String message() default "{message.invalid.category}";
+    String message() default "{" + Constant.INVALID_CATEGORY + "}";
 
     Class<?>[] groups() default {};
 

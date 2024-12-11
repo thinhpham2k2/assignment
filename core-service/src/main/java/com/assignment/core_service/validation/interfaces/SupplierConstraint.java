@@ -1,5 +1,6 @@
 package com.assignment.core_service.validation.interfaces;
 
+import com.assignment.core_service.util.Constant;
 import com.assignment.core_service.validation.SupplierValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -17,7 +18,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = SupplierValidator.class)
 public @interface SupplierConstraint {
 
-    String message() default "{message.invalid.supplier}";
+    String message() default "{" + Constant.INVALID_SUPPLIER + "}";
 
     Class<?>[] groups() default {};
 

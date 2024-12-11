@@ -68,6 +68,7 @@ public class ApplicationExceptionHandler {
             errorMap.computeIfAbsent(fieldName, k -> new ArrayList<>()).add(errorMessage);
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON)
+                .body(errorMap);
     }
 }
