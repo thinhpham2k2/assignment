@@ -15,4 +15,4 @@ EXPOSE 8082
 ENTRYPOINT ["java", "-jar", "app.jar"]
 
 # Build command: docker build -t core_image .
-# Run command: docker run --name core_container -p 8080:8080 core
+# Run command: docker run --name core_container -p 8082:8082 core_image

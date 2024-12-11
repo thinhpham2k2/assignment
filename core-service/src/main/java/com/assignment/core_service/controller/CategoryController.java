@@ -27,7 +27,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "\uD83C\uDFF7️ Category API")
-@RequestMapping("/api/v1/categories")
+@RequestMapping("/api/v1/core/categories")
 @SecurityRequirement(name = "Authorization")
 public class CategoryController {
 

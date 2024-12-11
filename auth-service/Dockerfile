@@ -15,4 +15,4 @@ EXPOSE 8081
 ENTRYPOINT ["java", "-jar", "app.jar"]
 
 # Build command: docker build -t auth_image .
-# Run command: docker run --name auth_container -p 8080:8080 auth
+# Run command: docker run --name auth_container -p 8081:8081 auth_image

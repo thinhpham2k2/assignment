@@ -27,7 +27,7 @@ services:
       - DB_PASSWORD=12345
       - DB_URL=jdbc:mysql://database:3306/core_db
     ports:
-      - "8080:8080"
+      - "8082:8082"
     depends_on:
       database:
         condition: service_healthy
@@ -45,6 +45,21 @@ services:
       - DB_URL=jdbc:mysql://database:3306/auth_db
     ports:
       - "8081:8081"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - microservice_networks
+
+  gateway:
+    container_name: gateway-service
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    environment:
+      - DOCKER_HOST=host.docker.internal
+    ports:
+      - "8080:8080"
     depends_on:
       database:
         condition: service_healthy
