@@ -1,9 +1,9 @@
 package com.assignment.core_service.controller;
 
-import com.assignment.core_service.dto.category.CategoryDTO;
-import com.assignment.core_service.dto.category.CreateCategoryDTO;
-import com.assignment.core_service.dto.category.UpdateCategoryDTO;
-import com.assignment.core_service.service.interfaces.CategoryService;
+import com.assignment.core_service.dto.supplier.CreateSupplierDTO;
+import com.assignment.core_service.dto.supplier.SupplierDTO;
+import com.assignment.core_service.dto.supplier.UpdateSupplierDTO;
+import com.assignment.core_service.service.interfaces.SupplierService;
 import com.assignment.core_service.util.Constant;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,18 +26,18 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "\uD83C\uDFF7 Category API")
-@RequestMapping("/api/v1/core/categories")
+@Tag(name = "\uD83D\uDE9A Supplier API")
+@RequestMapping("/api/v1/core/suppliers")
 @SecurityRequirement(name = "Authorization")
-public class CategoryController {
+public class SupplierController {
 
     private final MessageSource messageSource;
 
-    private final CategoryService categoryService;
+    private final SupplierService supplierService;
 
     @GetMapping("")
     @Secured({Constant.ADMIN, Constant.CUSTOMER})
-    @Operation(summary = "Get category list")
+    @Operation(summary = "Get supplier list")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success", content =
                     {@Content(mediaType = "application/json", schema =
@@ -59,7 +59,7 @@ public class CategoryController {
                                      @RequestParam(defaultValue = "10") Integer limit)
             throws MethodArgumentTypeMismatchException {
 
-        PagedModel<CategoryDTO> list = categoryService.findAllByCondition(search, sort, page, limit);
+        PagedModel<SupplierDTO> list = supplierService.findAllByCondition(search, sort, page, limit);
 
         if (!list.getContent().isEmpty()) {
 
@@ -73,11 +73,11 @@ public class CategoryController {
 
     @GetMapping("/{id}")
     @Secured({Constant.ADMIN, Constant.CUSTOMER})
-    @Operation(summary = "Get category by id")
+    @Operation(summary = "Get supplier by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success", content =
                     {@Content(mediaType = "application/json", schema =
-                    @Schema(implementation = CategoryDTO.class))}),
+                    @Schema(implementation = SupplierDTO.class))}),
             @ApiResponse(responseCode = "400", description = "Bad Request", content =
                     {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content =
@@ -92,11 +92,11 @@ public class CategoryController {
     public ResponseEntity<?> getById(@PathVariable(value = "id") Long id)
             throws MethodArgumentTypeMismatchException {
 
-        CategoryDTO category = categoryService.findById(id);
+        SupplierDTO supplier = supplierService.findById(id);
 
-        if (category != null) {
+        if (supplier != null) {
 
-            return ResponseEntity.status(HttpStatus.OK).body(category);
+            return ResponseEntity.status(HttpStatus.OK).body(supplier);
         } else {
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.TEXT_PLAIN).body(
@@ -106,7 +106,7 @@ public class CategoryController {
 
     @PostMapping(value = "")
     @Secured({Constant.ADMIN})
-    @Operation(summary = "Create category")
+    @Operation(summary = "Create supplier")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Created", content =
                     {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
@@ -119,10 +119,10 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content =
                     {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
     })
-    public ResponseEntity<?> create(@RequestBody @Validated CreateCategoryDTO create)
+    public ResponseEntity<?> create(@RequestBody @Validated CreateSupplierDTO create)
             throws MethodArgumentTypeMismatchException {
 
-        categoryService.create(create);
+        supplierService.create(create);
 
         return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.TEXT_PLAIN).body(
                 messageSource.getMessage(Constant.CREATE_SUCCESS, null, LocaleContextHolder.getLocale()));
@@ -130,7 +130,7 @@ public class CategoryController {
 
     @PutMapping("/{id}")
     @Secured({Constant.ADMIN})
-    @Operation(summary = "Update category")
+    @Operation(summary = "Update supplier")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success", content =
                     {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
@@ -144,10 +144,10 @@ public class CategoryController {
                     {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
     })
     public ResponseEntity<?> update(@PathVariable(value = "id") Long id,
-                                    @RequestBody @Validated UpdateCategoryDTO update)
+                                    @RequestBody @Validated UpdateSupplierDTO update)
             throws MethodArgumentTypeMismatchException {
 
-        categoryService.update(update, id);
+        supplierService.update(update, id);
 
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.TEXT_PLAIN).body(
                 messageSource.getMessage(Constant.UPDATE_SUCCESS, null, LocaleContextHolder.getLocale()));
@@ -155,7 +155,7 @@ public class CategoryController {
 
     @DeleteMapping("/{id}")
     @Secured({Constant.ADMIN})
-    @Operation(summary = "Delete category")
+    @Operation(summary = "Delete supplier")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "No Content", content =
                     {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
@@ -171,7 +171,7 @@ public class CategoryController {
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id)
             throws MethodArgumentTypeMismatchException {
 
-        categoryService.delete(id);
+        supplierService.delete(id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).contentType(MediaType.TEXT_PLAIN).body(
                 messageSource.getMessage(Constant.DELETE_SUCCESS, null, LocaleContextHolder.getLocale()));

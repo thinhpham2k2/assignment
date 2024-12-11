@@ -87,7 +87,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void update(UpdateCategoryDTO update, Long id) {
+    public void update(UpdateCategoryDTO update, long id) {
 
         Optional<Category> category = categoryRepository.findByIdAndStatus(id, true);
 
@@ -109,7 +109,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(long id) {
 
         Optional<Category> category = categoryRepository.findByIdAndStatus(id, true);
 
