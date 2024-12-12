@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,11 +30,21 @@ public class SecurityConfig {
 
     private final AuthenticationProvider authenticationProvider;
 
+    private static final String[] unauthenticatedRequest = new String[]{
+            "/swagger/**",
+            "/swagger-ui/**",
+            "/v3/api-docs/**"
+    };
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(AbstractHttpConfigurer::disable).csrf(AbstractHttpConfigurer::disable);
-        http.authorizeHttpRequests(authorize -> authorize.requestMatchers(
-                "/swagger/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll().anyRequest().authenticated());
+        http.authorizeHttpRequests(authorize -> authorize
+                .requestMatchers(unauthenticatedRequest).permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/core/categories").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/core/suppliers").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/core/products/**").permitAll()
+                .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

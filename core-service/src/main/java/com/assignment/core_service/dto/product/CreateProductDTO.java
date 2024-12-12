@@ -26,11 +26,11 @@ public class CreateProductDTO implements Serializable {
 
     @CategoryConstraint
     @NotNull(message = "{" + Constant.CATEGORY_ID_REQUIRE + "}")
-    private String categoryId;
+    private Long categoryId;
 
     @SupplierConstraint
     @NotNull(message = "{" + Constant.SUPPLIER_ID_REQUIRE + "}")
-    private String supplierId;
+    private Long supplierId;
 
     private String image;
 

@@ -23,4 +23,5 @@ public class Constant implements Serializable {
     public static final String EMAIL_REQUIRE = "message.email.require";
     public static final String PASSWORD_SIZE = "message.password.size";
     public static final String PHONE_SIZE = "message.phone.size";
+    public static final String INVALID_ACCOUNT = "message.invalid.account";
 }

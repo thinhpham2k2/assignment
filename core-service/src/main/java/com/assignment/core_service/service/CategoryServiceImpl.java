@@ -65,7 +65,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         Set<String> sourceFieldList = pagingService.getAllFields(Category.class);
         String[] subSort = sort.split(",");
-        if (pagingService.checkPropertPresent(sourceFieldList, subSort[0])) {
+        if (pagingService.checkPropertyPresent(sourceFieldList, subSort[0])) {
 
             order.add(new Sort.Order(pagingService.getSortDirection(subSort[1]), subSort[0]));
         } else {
@@ -97,7 +97,6 @@ public class CategoryServiceImpl implements CategoryService {
     public void update(UpdateCategoryDTO update, long id) {
 
         Optional<Category> category = categoryRepository.findByIdAndStatus(id, true);
-
         if (category.isPresent()) {
 
             try {
@@ -119,7 +118,6 @@ public class CategoryServiceImpl implements CategoryService {
     public void delete(long id) {
 
         Optional<Category> category = categoryRepository.findByIdAndStatus(id, true);
-
         if (category.isPresent()) {
 
             try {

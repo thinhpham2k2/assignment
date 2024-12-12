@@ -10,5 +10,5 @@ public interface PagingService {
 
     Sort.Direction getSortDirection(String direction);
 
-    boolean checkPropertPresent(final Set<String> properties, final String propertyName);
+    boolean checkPropertyPresent(final Set<String> properties, final String propertyName);
 }

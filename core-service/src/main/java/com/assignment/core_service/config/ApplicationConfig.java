@@ -1,6 +1,7 @@
 package com.assignment.core_service.config;
 
 import com.assignment.core_service.auditing.ApplicationAuditAware;
+import com.assignment.core_service.entity.Account;
 import com.assignment.core_service.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -42,7 +43,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public AuditorAware<Long> auditorAware(){
+    public AuditorAware<Account> auditorAware(){
 
         return new ApplicationAuditAware();
     }

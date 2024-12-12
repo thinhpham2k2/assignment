@@ -1,13 +1,13 @@
 package com.assignment.core_service.service;
 
-import com.assignment.core_service.dto.account.AccountDTO;
-import com.assignment.core_service.dto.account.CreateAccountDTO;
-import com.assignment.core_service.dto.account.UpdateAccountDTO;
-import com.assignment.core_service.entity.Account;
-import com.assignment.core_service.mapper.AccountMapper;
-import com.assignment.core_service.repository.AccountRepository;
-import com.assignment.core_service.service.interfaces.AccountService;
+import com.assignment.core_service.dto.product.CreateProductDTO;
+import com.assignment.core_service.dto.product.ProductDTO;
+import com.assignment.core_service.dto.product.UpdateProductDTO;
+import com.assignment.core_service.entity.Product;
+import com.assignment.core_service.mapper.ProductMapper;
+import com.assignment.core_service.repository.ProductRepository;
 import com.assignment.core_service.service.interfaces.PagingService;
+import com.assignment.core_service.service.interfaces.ProductService;
 import com.assignment.core_service.util.Constant;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedModel;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
@@ -30,40 +29,33 @@ import java.util.Set;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class AccountServiceImpl implements AccountService {
+public class ProductServiceImpl implements ProductService {
 
     private final MessageSource messageSource;
 
-    private final PasswordEncoder passwordEncoder;
-
-    private final AccountMapper accountMapper;
+    private final ProductMapper productMapper;
 
     private final PagingService pagingService;
 
-    private final AccountRepository accountRepository;
-
-    @Override
-    public boolean isDuplicateUsername(String userName) {
-
-        return accountRepository.existsByUserName(userName);
-    }
+    private final ProductRepository productRepository;
 
     @Override
     public boolean existsById(long id) {
 
-        return accountRepository.existsByIdAndStatus(id, true);
+        return productRepository.existsByIdAndStatus(id, true);
     }
 
     @Override
-    public AccountDTO findById(long id) {
+    public ProductDTO findById(long id) {
 
-        Optional<Account> account = accountRepository.findByIdAndStatus(id, true);
+        Optional<Product> product = productRepository.findByIdAndStatus(id, true);
 
-        return account.map(accountMapper::entityToDTO).orElse(null);
+        return product.map(productMapper::entityToDTO).orElse(null);
     }
 
     @Override
-    public PagedModel<AccountDTO> findAllByCondition(String search, String sort, int page, int limit) {
+    public PagedModel<ProductDTO> findAllByCondition
+            (List<Long> categoryIds, List<Long> supplierIds, String search, String sort, int page, int limit) {
 
         if (page < 0) throw new InvalidParameterException(
                 messageSource.getMessage(Constant.INVALID_PAGE_NUMBER, null, LocaleContextHolder.getLocale()));
@@ -72,11 +64,11 @@ public class AccountServiceImpl implements AccountService {
 
         List<Sort.Order> order = new ArrayList<>();
 
-        Set<String> sourceFieldList = pagingService.getAllFields(Account.class);
+        Set<String> sourceFieldList = pagingService.getAllFields(Product.class);
         String[] subSort = sort.split(",");
         if (pagingService.checkPropertyPresent(sourceFieldList, subSort[0])) {
 
-            order.add(new Sort.Order(pagingService.getSortDirection(subSort[1]), subSort[0]));
+            order.add(new Sort.Order(pagingService.getSortDirection(subSort[1]), transferProperty(subSort[0])));
         } else {
 
             throw new InvalidParameterException("{" + subSort[0] + "} " +
@@ -84,19 +76,19 @@ public class AccountServiceImpl implements AccountService {
         }
 
         Pageable pageable = PageRequest.of(page, limit).withSort(Sort.by(order));
-        Page<Account> pageResult = accountRepository.findAllByCondition(true, search, pageable);
+        Page<Product> pageResult = productRepository.findAllByCondition(
+                true, categoryIds, supplierIds, search, pageable);
 
-        return new PagedModel<>(pageResult.map(accountMapper::entityToDTO));
+        return new PagedModel<>(pageResult.map(productMapper::entityToDTO));
     }
 
     @Override
-    public void create(CreateAccountDTO create) {
+    public void create(CreateProductDTO create) {
 
         try {
 
-            Account account = accountMapper.createToEntity(create);
-            account.setPassword(passwordEncoder.encode(account.getPassword()));
-            accountRepository.save(account);
+            Product product = productMapper.createToEntity(create);
+            productRepository.save(product);
         } catch (Exception e) {
 
             throw new InvalidParameterException(
@@ -105,14 +97,14 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void update(UpdateAccountDTO update, long id) {
+    public void update(UpdateProductDTO update, long id) {
 
-        Optional<Account> account = accountRepository.findByIdAndStatus(id, true);
-        if (account.isPresent()) {
+        Optional<Product> product = productRepository.findByIdAndStatus(id, true);
+        if (product.isPresent()) {
 
             try {
 
-                accountRepository.save(accountMapper.updateToEntity(update, account.get()));
+                productRepository.save(productMapper.updateToEntity(update, product.get()));
             } catch (Exception e) {
 
                 throw new InvalidParameterException(
@@ -121,20 +113,20 @@ public class AccountServiceImpl implements AccountService {
         } else {
 
             throw new InvalidParameterException(
-                    messageSource.getMessage(Constant.INVALID_ACCOUNT, null, LocaleContextHolder.getLocale()));
+                    messageSource.getMessage(Constant.INVALID_PRODUCT, null, LocaleContextHolder.getLocale()));
         }
     }
 
     @Override
     public void delete(long id) {
 
-        Optional<Account> account = accountRepository.findByIdAndStatus(id, true);
-        if (account.isPresent()) {
+        Optional<Product> product = productRepository.findByIdAndStatus(id, true);
+        if (product.isPresent()) {
 
             try {
 
-                account.get().setStatus(false);
-                accountRepository.save(account.get());
+                product.get().setStatus(false);
+                productRepository.save(product.get());
             } catch (Exception e) {
 
                 throw new InvalidParameterException(
@@ -143,7 +135,16 @@ public class AccountServiceImpl implements AccountService {
         } else {
 
             throw new InvalidParameterException(
-                    messageSource.getMessage(Constant.INVALID_ACCOUNT, null, LocaleContextHolder.getLocale()));
+                    messageSource.getMessage(Constant.INVALID_PRODUCT, null, LocaleContextHolder.getLocale()));
         }
+    }
+
+    private String transferProperty(String property) {
+
+        return switch (property) {
+            case "category" -> "category.category";
+            case "supplier" -> "supplier.supplierName";
+            default -> property;
+        };
     }
 }

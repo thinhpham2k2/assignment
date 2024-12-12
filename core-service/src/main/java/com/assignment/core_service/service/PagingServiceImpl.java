@@ -36,7 +36,7 @@ public class PagingServiceImpl implements PagingService {
     }
 
     @Override
-    public boolean checkPropertPresent(Set<String> properties, String propertyName) {
+    public boolean checkPropertyPresent(Set<String> properties, String propertyName) {
         return properties.contains(propertyName);
     }
 }

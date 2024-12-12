@@ -22,9 +22,9 @@ public class ProductDTO implements Serializable {
     private String supplierId;
     private String supplierName;
     private String creatorId;
-    private String creatorName;
+    private String creatorEmail;
     private String updaterId;
-    private String updaterName;
+    private String updaterEmail;
     private String image;
     private BigDecimal price;
     private BigDecimal weight;

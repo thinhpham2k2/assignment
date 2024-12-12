@@ -65,7 +65,7 @@ public class SupplierServiceImpl implements SupplierService {
 
         Set<String> sourceFieldList = pagingService.getAllFields(Supplier.class);
         String[] subSort = sort.split(",");
-        if (pagingService.checkPropertPresent(sourceFieldList, subSort[0])) {
+        if (pagingService.checkPropertyPresent(sourceFieldList, subSort[0])) {
 
             order.add(new Sort.Order(pagingService.getSortDirection(subSort[1]), subSort[0]));
         } else {
@@ -97,7 +97,6 @@ public class SupplierServiceImpl implements SupplierService {
     public void update(UpdateSupplierDTO update, long id) {
 
         Optional<Supplier> supplier = supplierRepository.findByIdAndStatus(id, true);
-
         if (supplier.isPresent()) {
 
             try {
@@ -119,7 +118,6 @@ public class SupplierServiceImpl implements SupplierService {
     public void delete(long id) {
 
         Optional<Supplier> supplier = supplierRepository.findByIdAndStatus(id, true);
-
         if (supplier.isPresent()) {
 
             try {

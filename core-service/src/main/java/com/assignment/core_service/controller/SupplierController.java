@@ -28,7 +28,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RequiredArgsConstructor
 @Tag(name = "\uD83D\uDE9A Supplier API")
 @RequestMapping("/api/v1/core/suppliers")
-@SecurityRequirement(name = "Authorization")
 public class SupplierController {
 
     private final MessageSource messageSource;
@@ -36,17 +35,12 @@ public class SupplierController {
     private final SupplierService supplierService;
 
     @GetMapping("")
-    @Secured({Constant.ADMIN, Constant.CUSTOMER})
     @Operation(summary = "Get supplier list")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success", content =
                     {@Content(mediaType = "application/json", schema =
                     @Schema(implementation = PagedModel.class))}),
             @ApiResponse(responseCode = "400", description = "Bad Request", content =
-                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
-            @ApiResponse(responseCode = "401", description = "Unauthorized", content =
-                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
-            @ApiResponse(responseCode = "403", description = "Access Denied", content =
                     {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
             @ApiResponse(responseCode = "404", description = "Not Found", content =
                     {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
@@ -73,6 +67,7 @@ public class SupplierController {
 
     @GetMapping("/{id}")
     @Secured({Constant.ADMIN, Constant.CUSTOMER})
+    @SecurityRequirement(name = "Authorization")
     @Operation(summary = "Get supplier by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success", content =
@@ -106,6 +101,7 @@ public class SupplierController {
 
     @PostMapping(value = "")
     @Secured({Constant.ADMIN})
+    @SecurityRequirement(name = "Authorization")
     @Operation(summary = "Create supplier")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Created", content =
@@ -130,6 +126,7 @@ public class SupplierController {
 
     @PutMapping("/{id}")
     @Secured({Constant.ADMIN})
+    @SecurityRequirement(name = "Authorization")
     @Operation(summary = "Update supplier")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success", content =
@@ -155,6 +152,7 @@ public class SupplierController {
 
     @DeleteMapping("/{id}")
     @Secured({Constant.ADMIN})
+    @SecurityRequirement(name = "Authorization")
     @Operation(summary = "Delete supplier")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "No Content", content =
