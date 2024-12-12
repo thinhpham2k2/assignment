@@ -26,6 +26,9 @@ services:
       - DB_USERNAME=root
       - DB_PASSWORD=12345
       - DB_URL=jdbc:mysql://database:3306/core_db
+      - DOCKER_HOST=host.docker.internal
+      - RABBITMQ_USER=root
+      - RABBITMQ_PASS=12345
     ports:
       - "8082:8082"
     depends_on:
@@ -43,6 +46,9 @@ services:
       - DB_USERNAME=root
       - DB_PASSWORD=12345
       - DB_URL=jdbc:mysql://database:3306/auth_db
+      - DOCKER_HOST=host.docker.internal
+      - RABBITMQ_USER=root
+      - RABBITMQ_PASS=12345
     ports:
       - "8081:8081"
     depends_on:
@@ -60,6 +66,21 @@ services:
       - DOCKER_HOST=host.docker.internal
     ports:
       - "8080:8080"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - microservice_networks
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=12345
+    ports:
+      - "5672:5672"
+      - "15672:15672"
     depends_on:
       database:
         condition: service_healthy

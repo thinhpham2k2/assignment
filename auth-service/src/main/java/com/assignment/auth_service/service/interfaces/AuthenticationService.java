@@ -7,7 +7,7 @@ public interface AuthenticationService {
 
     AccountDTO authenticate(String userName, String password);
 
-    AccountDTO register(CreateAccountDTO createDto);
+    AccountDTO register(CreateAccountDTO create);
 
     boolean isDuplicateUsername(String userName);
 }

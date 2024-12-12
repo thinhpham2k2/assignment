@@ -5,12 +5,15 @@ import com.assignment.core_service.dto.account.CreateAccountDTO;
 import com.assignment.core_service.dto.account.UpdateAccountDTO;
 import com.assignment.core_service.entity.Account;
 import com.assignment.core_service.mapper.AccountMapper;
+import com.assignment.core_service.rabbitmq.publisher.RabbitMQProducer;
 import com.assignment.core_service.repository.AccountRepository;
 import com.assignment.core_service.service.interfaces.AccountService;
 import com.assignment.core_service.service.interfaces.PagingService;
 import com.assignment.core_service.util.Constant;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
@@ -40,7 +43,11 @@ public class AccountServiceImpl implements AccountService {
 
     private final PagingService pagingService;
 
+    private final RabbitMQProducer rabbitMQProducer;
+
     private final AccountRepository accountRepository;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountServiceImpl.class);
 
     @Override
     public boolean isDuplicateUsername(String userName) {
@@ -94,9 +101,16 @@ public class AccountServiceImpl implements AccountService {
 
         try {
 
-            Account account = accountMapper.createToEntity(create);
-            account.setPassword(passwordEncoder.encode(account.getPassword()));
-            accountRepository.save(account);
+            create.setPassword(passwordEncoder.encode(create.getPassword()));
+            accountRepository.save(accountMapper.createToEntity(create));
+
+            try {
+
+                rabbitMQProducer.sendMessage(create);
+            }catch (Exception e){
+
+                LOGGER.info("Send message fail -> {}", create);
+            }
         } catch (Exception e) {
 
             throw new InvalidParameterException(
