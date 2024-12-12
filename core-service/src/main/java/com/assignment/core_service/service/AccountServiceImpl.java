@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedModel;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
@@ -32,6 +33,8 @@ import java.util.Set;
 public class AccountServiceImpl implements AccountService {
 
     private final MessageSource messageSource;
+
+    private final PasswordEncoder passwordEncoder;
 
     private final AccountMapper accountMapper;
 
@@ -91,7 +94,9 @@ public class AccountServiceImpl implements AccountService {
 
         try {
 
-            accountRepository.save(accountMapper.createToEntity(create));
+            Account account = accountMapper.createToEntity(create);
+            account.setPassword(passwordEncoder.encode(account.getPassword()));
+            accountRepository.save(account);
         } catch (Exception e) {
 
             throw new InvalidParameterException(
