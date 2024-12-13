@@ -11,7 +11,7 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "database-mysql" ]
-      interval: 10s
+      interval: 7s
       timeout: 5s
       retries: 3
     networks:
@@ -83,6 +83,27 @@ services:
       - "15672:15672"
     depends_on:
       database:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 7s
+      timeout: 5s
+      retries: 3
+    networks:
+      - microservice_networks
+
+  zipkin:
+    container_name: zipkin
+    image: openzipkin/zipkin:latest
+    ports:
+      - "9411:9411"
+    environment:
+      - RABBIT_ADDRESSES=host.docker.internal:5672
+      - RABBIT_USER=root
+      - RABBIT_PASSWORD=12345
+      - STORAGE_TYPE=mem
+    depends_on:
+      rabbitmq:
         condition: service_healthy
     networks:
       - microservice_networks

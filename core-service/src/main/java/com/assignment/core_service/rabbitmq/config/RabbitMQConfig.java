@@ -1,8 +1,12 @@
 package com.assignment.core_service.rabbitmq.config;
 
+import brave.Tracing;
+import brave.spring.rabbit.SpringRabbitTracing;
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.config.ContainerCustomizer;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,6 +49,28 @@ public class RabbitMQConfig {
     public MessageConverter converter() {
 
         return new Jackson2JsonMessageConverter();
+    }
+
+    @Bean
+    public SpringRabbitTracing springRabbitTracing(Tracing tracing) {
+
+        return SpringRabbitTracing
+                .newBuilder(tracing)
+                .build();
+    }
+
+    @Bean
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, SpringRabbitTracing tracing) {
+
+        RabbitTemplate rabbitTemplate = tracing.newRabbitTemplate(connectionFactory);
+        rabbitTemplate.setMessageConverter(converter());
+        return rabbitTemplate;
+    }
+
+    @Bean
+    public ContainerCustomizer<SimpleMessageListenerContainer> containerCustomizer() {
+
+        return container -> container.setObservationEnabled(true);
     }
 
     public AmqpTemplate amqpTemplate(ConnectionFactory connectionFactory) {
