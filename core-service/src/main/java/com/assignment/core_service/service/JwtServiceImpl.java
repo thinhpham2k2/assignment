@@ -1,10 +1,13 @@
 package com.assignment.core_service.service;
 
+import com.assignment.core_service.config.JwtConfiguration;
 import com.assignment.core_service.service.interfaces.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +15,12 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Service
+@RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
 
-    private static final String JWT_SECRET = "Y29udHJvbHRpcmVkdHJhcHNob290aHVuZHJlZGxhdWdoc29sZHdpc2Vwcm91ZGRlYXQ=";
+    private final JwtConfiguration jwtConfiguration;
+
+    private static final String DEFAULT_KEY = "Y29udHJvbHRpcmVkdHJhcHNob290aHVuZHJlZGxhdWdoc29sZHdpc2Vwcm91ZGRlYXQ=";
 
     @Override
     public String getUserNameFromJWT(String token) {
@@ -35,7 +41,9 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private Claims getAllClaims(String token) {
-        SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(JWT_SECRET));
+
+        String key = StringUtils.isBlank(jwtConfiguration.getKey()) ? DEFAULT_KEY : jwtConfiguration.getKey();
+        SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(key));
 
         return Jwts
                 .parser()

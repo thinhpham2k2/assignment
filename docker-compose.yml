@@ -8,7 +8,7 @@ services:
     ports:
       - "8000:3306"
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "database-mysql" ]
       interval: 7s
@@ -34,6 +34,8 @@ services:
     depends_on:
       database:
         condition: service_healthy
+      vault:
+        condition: service_started
     networks:
       - microservice_networks
 
@@ -54,6 +56,8 @@ services:
     depends_on:
       database:
         condition: service_healthy
+      vault:
+        condition: service_started
     networks:
       - microservice_networks
 
@@ -69,6 +73,10 @@ services:
     depends_on:
       database:
         condition: service_healthy
+      auth:
+        condition: service_started
+      core:
+        condition: service_started
     networks:
       - microservice_networks
 
@@ -85,7 +93,7 @@ services:
       database:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "rabbitmqctl", "status"]
+      test: [ "CMD", "rabbitmqctl", "status" ]
       interval: 7s
       timeout: 5s
       retries: 3
@@ -105,6 +113,23 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+    networks:
+      - microservice_networks
+
+  vault:
+    container_name: vault
+    image: hashicorp/vault:latest
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=0000
+      - VAULT_TOKEN=0000
+    ports:
+      - "8200:8200"
+    volumes:
+      - ./init-vault.sh:/init-vault.sh:rw
+    cap_add:
+      - IPC_LOCK
+    command:
+      sh -c 'vault server -dev -dev-listen-address=0.0.0.0:8200 & sleep 5 && /init-vault.sh && tail -f /dev/null '
     networks:
       - microservice_networks
 
