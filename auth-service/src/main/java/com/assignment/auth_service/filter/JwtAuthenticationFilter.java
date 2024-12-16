@@ -1,4 +1,4 @@
-package com.assignment.auth_service.config;
+package com.assignment.auth_service.filter;
 
 import com.assignment.auth_service.service.interfaces.JwtService;
 import jakarta.servlet.FilterChain;

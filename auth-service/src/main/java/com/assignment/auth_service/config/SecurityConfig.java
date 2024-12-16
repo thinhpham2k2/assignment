@@ -1,5 +1,6 @@
 package com.assignment.auth_service.config;
 
+import com.assignment.auth_service.filter.JwtAuthenticationFilter;
 import com.assignment.auth_service.util.Constant;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.assignment.core_service.config;
+package com.assignment.core_service.filter;
 
 import com.assignment.core_service.service.interfaces.JwtService;
 import jakarta.servlet.FilterChain;
