@@ -1,6 +1,6 @@
 package com.assignment.core_service.service;
 
-import com.assignment.core_service.config.JwtConfiguration;
+import com.assignment.core_service.config.JwtConfig;
 import com.assignment.core_service.service.interfaces.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -18,7 +18,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
 
-    private final JwtConfiguration jwtConfiguration;
+    private final JwtConfig jwtConfig;
 
     private static final String DEFAULT_KEY = "Y29udHJvbHRpcmVkdHJhcHNob290aHVuZHJlZGxhdWdoc29sZHdpc2Vwcm91ZGRlYXQ=";
 
@@ -42,7 +42,7 @@ public class JwtServiceImpl implements JwtService {
 
     private Claims getAllClaims(String token) {
 
-        String key = StringUtils.isBlank(jwtConfiguration.getKey()) ? DEFAULT_KEY : jwtConfiguration.getKey();
+        String key = StringUtils.isBlank(jwtConfig.getKey()) ? DEFAULT_KEY : jwtConfig.getKey();
         SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(key));
 
         return Jwts

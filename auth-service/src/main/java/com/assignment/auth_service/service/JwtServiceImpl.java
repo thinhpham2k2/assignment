@@ -1,6 +1,6 @@
 package com.assignment.auth_service.service;
 
-import com.assignment.auth_service.config.JwtConfiguration;
+import com.assignment.auth_service.config.JwtConfig;
 import com.assignment.auth_service.dto.account.AccountDTO;
 import com.assignment.auth_service.service.interfaces.JwtService;
 import io.jsonwebtoken.Claims;
@@ -20,7 +20,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
 
-    private final JwtConfiguration jwtConfiguration;
+    private final JwtConfig jwtConfig;
 
     private static final String DEFAULT_KEY = "Y29udHJvbHRpcmVkdHJhcHNob290aHVuZHJlZGxhdWdoc29sZHdpc2Vwcm91ZGRlYXQ=";
 
@@ -29,7 +29,7 @@ public class JwtServiceImpl implements JwtService {
             Map<String, Object> extraClaims,
             AccountDTO account) {
 
-        String key = StringUtils.isBlank(jwtConfiguration.getKey()) ? DEFAULT_KEY : jwtConfiguration.getKey();
+        String key = StringUtils.isBlank(jwtConfig.getKey()) ? DEFAULT_KEY : jwtConfig.getKey();
         SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(key));
 
         return Jwts
@@ -63,7 +63,7 @@ public class JwtServiceImpl implements JwtService {
 
     private Claims getAllClaims(String token) {
 
-        String key = StringUtils.isBlank(jwtConfiguration.getKey()) ? DEFAULT_KEY : jwtConfiguration.getKey();
+        String key = StringUtils.isBlank(jwtConfig.getKey()) ? DEFAULT_KEY : jwtConfig.getKey();
         SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(key));
 
         return Jwts

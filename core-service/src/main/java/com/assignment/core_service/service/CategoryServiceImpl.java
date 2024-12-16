@@ -11,6 +11,7 @@ import com.assignment.core_service.service.interfaces.PagingService;
 import com.assignment.core_service.util.Constant;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
@@ -46,6 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Cacheable(cacheNames = "categories", key = "#id")
     public CategoryDTO findById(long id) {
 
         Optional<Category> category = categoryRepository.findByIdAndStatus(id, true);
