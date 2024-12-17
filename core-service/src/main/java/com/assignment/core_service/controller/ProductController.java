@@ -3,6 +3,7 @@ package com.assignment.core_service.controller;
 import com.assignment.core_service.dto.product.CreateProductDTO;
 import com.assignment.core_service.dto.product.ProductDTO;
 import com.assignment.core_service.dto.product.UpdateProductDTO;
+import com.assignment.core_service.dto.response.PagedDTO;
 import com.assignment.core_service.service.interfaces.ProductService;
 import com.assignment.core_service.util.Constant;
 import io.swagger.v3.oas.annotations.Operation;
@@ -62,7 +63,7 @@ public class ProductController {
                                      @RequestParam(defaultValue = "10") Integer limit)
             throws MethodArgumentTypeMismatchException {
 
-        PagedModel<ProductDTO> list = productService.findAllByCondition(
+        PagedDTO<ProductDTO> list = productService.findAllByCondition(
                 categoryIds, supplierIds, search, sort, page, limit);
 
         if (!list.getContent().isEmpty()) {

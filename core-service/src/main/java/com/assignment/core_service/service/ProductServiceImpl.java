@@ -3,6 +3,7 @@ package com.assignment.core_service.service;
 import com.assignment.core_service.dto.product.CreateProductDTO;
 import com.assignment.core_service.dto.product.ProductDTO;
 import com.assignment.core_service.dto.product.UpdateProductDTO;
+import com.assignment.core_service.dto.response.PagedDTO;
 import com.assignment.core_service.entity.Product;
 import com.assignment.core_service.mapper.ProductMapper;
 import com.assignment.core_service.repository.ProductRepository;
@@ -11,13 +12,14 @@ import com.assignment.core_service.service.interfaces.ProductService;
 import com.assignment.core_service.util.Constant;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
@@ -46,6 +48,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(cacheNames = "products:detail", key = "#id")
     public ProductDTO findById(long id) {
 
         Optional<Product> product = productRepository.findByIdAndStatus(id, true);
@@ -54,7 +57,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PagedModel<ProductDTO> findAllByCondition
+    @Cacheable(cacheNames = "products:list")
+    public PagedDTO<ProductDTO> findAllByCondition
             (List<Long> categoryIds, List<Long> supplierIds, String search, String sort, int page, int limit) {
 
         if (page < 0) throw new InvalidParameterException(
@@ -79,7 +83,7 @@ public class ProductServiceImpl implements ProductService {
         Page<Product> pageResult = productRepository.findAllByCondition(
                 true, categoryIds, supplierIds, search, pageable);
 
-        return new PagedModel<>(pageResult.map(productMapper::entityToDTO));
+        return new PagedDTO<>(pageResult.map(productMapper::entityToDTO));
     }
 
     @Override
@@ -118,6 +122,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "products:detail", key = "#id")
     public void delete(long id) {
 
         Optional<Product> product = productRepository.findByIdAndStatus(id, true);

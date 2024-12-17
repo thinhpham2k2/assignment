@@ -128,10 +128,24 @@ services:
       - ./init-vault.sh:/init-vault.sh:rw
     cap_add:
       - IPC_LOCK
-    command:
-      sh -c 'vault server -dev -dev-listen-address=0.0.0.0:8200 & sleep 5 && /init-vault.sh && tail -f /dev/null '
+    command: ["sh", "-c", "vault server -dev -dev-listen-address=0.0.0.0:8200 & sleep 5 && /init-vault.sh && tail -f /dev/null"]
     networks:
       - microservice_networks
+
+  redis:
+    container_name: redis
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=12345
+    volumes:
+      - cache:/data
+
+volumes:
+  cache:
+    driver: local
 
 networks:
   microservice_networks:

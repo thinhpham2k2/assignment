@@ -3,6 +3,7 @@ package com.assignment.core_service.service;
 import com.assignment.core_service.dto.account.AccountDTO;
 import com.assignment.core_service.dto.account.CreateAccountDTO;
 import com.assignment.core_service.dto.account.UpdateAccountDTO;
+import com.assignment.core_service.dto.response.PagedDTO;
 import com.assignment.core_service.entity.Account;
 import com.assignment.core_service.mapper.AccountMapper;
 import com.assignment.core_service.rabbitmq.publisher.RabbitMQProducer;
@@ -14,13 +15,14 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PagedModel;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -62,6 +64,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Cacheable(cacheNames = "accounts:detail", key = "#id")
     public AccountDTO findById(long id) {
 
         Optional<Account> account = accountRepository.findByIdAndStatus(id, true);
@@ -70,7 +73,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public PagedModel<AccountDTO> findAllByCondition(String search, String sort, int page, int limit) {
+    @Cacheable(cacheNames = "accounts:list")
+    public PagedDTO<AccountDTO> findAllByCondition(String search, String sort, int page, int limit) {
 
         if (page < 0) throw new InvalidParameterException(
                 messageSource.getMessage(Constant.INVALID_PAGE_NUMBER, null, LocaleContextHolder.getLocale()));
@@ -93,7 +97,7 @@ public class AccountServiceImpl implements AccountService {
         Pageable pageable = PageRequest.of(page, limit).withSort(Sort.by(order));
         Page<Account> pageResult = accountRepository.findAllByCondition(true, search, pageable);
 
-        return new PagedModel<>(pageResult.map(accountMapper::entityToDTO));
+        return new PagedDTO<>(pageResult.map(accountMapper::entityToDTO));
     }
 
     @Override
@@ -140,6 +144,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "accounts:detail", key = "#id")
     public void delete(long id) {
 
         Optional<Account> account = accountRepository.findByIdAndStatus(id, true);

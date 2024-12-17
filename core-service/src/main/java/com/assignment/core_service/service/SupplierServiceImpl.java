@@ -1,5 +1,6 @@
 package com.assignment.core_service.service;
 
+import com.assignment.core_service.dto.response.PagedDTO;
 import com.assignment.core_service.dto.supplier.CreateSupplierDTO;
 import com.assignment.core_service.dto.supplier.SupplierDTO;
 import com.assignment.core_service.dto.supplier.UpdateSupplierDTO;
@@ -11,13 +12,14 @@ import com.assignment.core_service.service.interfaces.SupplierService;
 import com.assignment.core_service.util.Constant;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
@@ -46,15 +48,17 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
+    @Cacheable(cacheNames = "suppliers:detail", key = "#id")
     public SupplierDTO findById(long id) {
 
-        Optional<Supplier> Supplier = supplierRepository.findByIdAndStatus(id, true);
+        Optional<Supplier> supplier = supplierRepository.findByIdAndStatus(id, true);
 
-        return Supplier.map(supplierMapper::entityToDTO).orElse(null);
+        return supplier.map(supplierMapper::entityToDTO).orElse(null);
     }
 
     @Override
-    public PagedModel<SupplierDTO> findAllByCondition(String search, String sort, int page, int limit) {
+    @Cacheable(cacheNames = "suppliers:list")
+    public PagedDTO<SupplierDTO> findAllByCondition(String search, String sort, int page, int limit) {
 
         if (page < 0) throw new InvalidParameterException(
                 messageSource.getMessage(Constant.INVALID_PAGE_NUMBER, null, LocaleContextHolder.getLocale()));
@@ -77,7 +81,7 @@ public class SupplierServiceImpl implements SupplierService {
         Pageable pageable = PageRequest.of(page, limit).withSort(Sort.by(order));
         Page<Supplier> pageResult = supplierRepository.findAllByCondition(true, search, pageable);
 
-        return new PagedModel<>(pageResult.map(supplierMapper::entityToDTO));
+        return new PagedDTO<>(pageResult.map(supplierMapper::entityToDTO));
     }
 
     @Override
@@ -115,6 +119,7 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "suppliers:detail", key = "#id")
     public void delete(long id) {
 
         Optional<Supplier> supplier = supplierRepository.findByIdAndStatus(id, true);

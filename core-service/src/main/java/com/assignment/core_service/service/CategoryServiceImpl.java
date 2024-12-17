@@ -3,6 +3,7 @@ package com.assignment.core_service.service;
 import com.assignment.core_service.dto.category.CategoryDTO;
 import com.assignment.core_service.dto.category.CreateCategoryDTO;
 import com.assignment.core_service.dto.category.UpdateCategoryDTO;
+import com.assignment.core_service.dto.response.PagedDTO;
 import com.assignment.core_service.entity.Category;
 import com.assignment.core_service.mapper.CategoryMapper;
 import com.assignment.core_service.repository.CategoryRepository;
@@ -11,6 +12,7 @@ import com.assignment.core_service.service.interfaces.PagingService;
 import com.assignment.core_service.util.Constant;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -18,7 +20,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
@@ -47,7 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @Cacheable(cacheNames = "categories", key = "#id")
+    @Cacheable(cacheNames = "categories:detail", key = "#id")
     public CategoryDTO findById(long id) {
 
         Optional<Category> category = categoryRepository.findByIdAndStatus(id, true);
@@ -56,7 +57,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public PagedModel<CategoryDTO> findAllByCondition(String search, String sort, int page, int limit) {
+    @Cacheable(cacheNames = "categories:list")
+    public PagedDTO<CategoryDTO> findAllByCondition(String search, String sort, int page, int limit) {
 
         if (page < 0) throw new InvalidParameterException(
                 messageSource.getMessage(Constant.INVALID_PAGE_NUMBER, null, LocaleContextHolder.getLocale()));
@@ -79,7 +81,7 @@ public class CategoryServiceImpl implements CategoryService {
         Pageable pageable = PageRequest.of(page, limit).withSort(Sort.by(order));
         Page<Category> pageResult = categoryRepository.findAllByCondition(true, search, pageable);
 
-        return new PagedModel<>(pageResult.map(categoryMapper::entityToDTO));
+        return new PagedDTO<>(pageResult.map(categoryMapper::entityToDTO));
     }
 
     @Override
@@ -117,6 +119,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "categories:detail", key = "#id")
     public void delete(long id) {
 
         Optional<Category> category = categoryRepository.findByIdAndStatus(id, true);

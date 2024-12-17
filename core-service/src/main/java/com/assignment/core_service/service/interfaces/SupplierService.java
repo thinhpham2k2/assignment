@@ -1,9 +1,9 @@
 package com.assignment.core_service.service.interfaces;
 
+import com.assignment.core_service.dto.response.PagedDTO;
 import com.assignment.core_service.dto.supplier.CreateSupplierDTO;
 import com.assignment.core_service.dto.supplier.SupplierDTO;
 import com.assignment.core_service.dto.supplier.UpdateSupplierDTO;
-import org.springframework.data.web.PagedModel;
 
 public interface SupplierService {
 
@@ -11,7 +11,7 @@ public interface SupplierService {
 
     SupplierDTO findById(long id);
 
-    PagedModel<SupplierDTO> findAllByCondition(String search, String sort, int page, int limit);
+    PagedDTO<SupplierDTO> findAllByCondition(String search, String sort, int page, int limit);
 
     void create(CreateSupplierDTO create);
 

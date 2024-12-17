@@ -3,6 +3,7 @@ package com.assignment.core_service.controller;
 import com.assignment.core_service.dto.account.AccountDTO;
 import com.assignment.core_service.dto.account.CreateAccountDTO;
 import com.assignment.core_service.dto.account.UpdateAccountDTO;
+import com.assignment.core_service.dto.response.PagedDTO;
 import com.assignment.core_service.service.interfaces.AccountService;
 import com.assignment.core_service.util.Constant;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,7 +60,7 @@ public class AccountController {
                                      @RequestParam(defaultValue = "10") Integer limit)
             throws MethodArgumentTypeMismatchException {
 
-        PagedModel<AccountDTO> list = accountService.findAllByCondition(search, sort, page, limit);
+        PagedDTO<AccountDTO> list = accountService.findAllByCondition(search, sort, page, limit);
 
         if (!list.getContent().isEmpty()) {
 

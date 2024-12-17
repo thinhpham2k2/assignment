@@ -3,6 +3,7 @@ package com.assignment.core_service.controller;
 import com.assignment.core_service.dto.category.CategoryDTO;
 import com.assignment.core_service.dto.category.CreateCategoryDTO;
 import com.assignment.core_service.dto.category.UpdateCategoryDTO;
+import com.assignment.core_service.dto.response.PagedDTO;
 import com.assignment.core_service.service.interfaces.CategoryService;
 import com.assignment.core_service.util.Constant;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,7 +54,7 @@ public class CategoryController {
                                      @RequestParam(defaultValue = "10") Integer limit)
             throws MethodArgumentTypeMismatchException {
 
-        PagedModel<CategoryDTO> list = categoryService.findAllByCondition(search, sort, page, limit);
+        PagedDTO<CategoryDTO> list = categoryService.findAllByCondition(search, sort, page, limit);
 
         if (!list.getContent().isEmpty()) {
 

@@ -1,5 +1,6 @@
 package com.assignment.core_service.controller;
 
+import com.assignment.core_service.dto.response.PagedDTO;
 import com.assignment.core_service.dto.supplier.CreateSupplierDTO;
 import com.assignment.core_service.dto.supplier.SupplierDTO;
 import com.assignment.core_service.dto.supplier.UpdateSupplierDTO;
@@ -53,7 +54,7 @@ public class SupplierController {
                                      @RequestParam(defaultValue = "10") Integer limit)
             throws MethodArgumentTypeMismatchException {
 
-        PagedModel<SupplierDTO> list = supplierService.findAllByCondition(search, sort, page, limit);
+        PagedDTO<SupplierDTO> list = supplierService.findAllByCondition(search, sort, page, limit);
 
         if (!list.getContent().isEmpty()) {
 
