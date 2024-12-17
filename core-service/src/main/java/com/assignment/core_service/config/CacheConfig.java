@@ -17,14 +17,17 @@ public class CacheConfig {
 
     @Bean
     public LettuceConnectionFactory connectionFactory() {
+
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
         configuration.setHostName(properties().getHost());
         configuration.setPort(properties().getPort());
+        configuration.setPassword(properties().getPassword());
         return new LettuceConnectionFactory(configuration);
     }
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate() {
+
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory());
         redisTemplate.setKeySerializer(new JdkSerializationRedisSerializer());
@@ -35,6 +38,7 @@ public class CacheConfig {
     @Bean
     @Primary
     public RedisProperties properties() {
+
         return new RedisProperties();
     }
 }

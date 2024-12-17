@@ -3,10 +3,10 @@ services:
   database:
     container_name: database-mysql
     image: mysql:8.0.40-debian
-    environment:
-      - MYSQL_ROOT_PASSWORD=12345
     ports:
       - "8000:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=12345
     volumes:
       - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
@@ -22,6 +22,8 @@ services:
     build:
       context: ./core-service
       dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
     environment:
       - DB_USERNAME=root
       - DB_PASSWORD=12345
@@ -29,8 +31,6 @@ services:
       - DOCKER_HOST=host.docker.internal
       - RABBITMQ_USER=root
       - RABBITMQ_PASS=12345
-    ports:
-      - "8082:8082"
     depends_on:
       database:
         condition: service_healthy
@@ -44,6 +44,8 @@ services:
     build:
       context: ./auth-service
       dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
     environment:
       - DB_USERNAME=root
       - DB_PASSWORD=12345
@@ -51,8 +53,6 @@ services:
       - DOCKER_HOST=host.docker.internal
       - RABBITMQ_USER=root
       - RABBITMQ_PASS=12345
-    ports:
-      - "8081:8081"
     depends_on:
       database:
         condition: service_healthy
@@ -83,12 +83,12 @@ services:
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:management-alpine
-    environment:
-      - RABBITMQ_DEFAULT_USER=root
-      - RABBITMQ_DEFAULT_PASS=12345
     ports:
       - "5672:5672"
       - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=12345
     depends_on:
       database:
         condition: service_healthy
@@ -119,11 +119,11 @@ services:
   vault:
     container_name: vault
     image: hashicorp/vault:latest
+    ports:
+      - "8200:8200"
     environment:
       - VAULT_DEV_ROOT_TOKEN_ID=0000
       - VAULT_TOKEN=0000
-    ports:
-      - "8200:8200"
     volumes:
       - ./init-vault.sh:/init-vault.sh:rw
     cap_add:
@@ -138,10 +138,11 @@ services:
     restart: always
     ports:
       - "6379:6379"
-    environment:
-      - REDIS_PASSWORD=12345
+    command: ["bash", "-c", "redis-server --appendonly yes --requirepass 12345"]
     volumes:
       - cache:/data
+    networks:
+      - microservice_networks
 
 volumes:
   cache:

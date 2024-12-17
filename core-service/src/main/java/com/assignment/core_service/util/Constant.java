@@ -50,4 +50,5 @@ public class Constant implements Serializable {
     public static final String INVALID_PROPERTY = "message.invalid.property";
     public static final String INVALID_ACCOUNT = "message.invalid.account";
     public static final String INVALID_PRODUCT = "message.invalid.product";
+    public static final String INVALID_GITHUB_PROFILE = "message.invalid.github.profile";
 }

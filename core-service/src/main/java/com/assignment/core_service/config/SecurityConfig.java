@@ -45,6 +45,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/core/categories").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/core/suppliers").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/core/products/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/core/github/**").permitAll()
                 .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider)
