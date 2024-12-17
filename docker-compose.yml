@@ -144,6 +144,16 @@ services:
     networks:
       - microservice_networks
 
+  prometheus:
+    container_name: prometheus
+    image: bitnami/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - microservice_networks
+
 volumes:
   cache:
     driver: local

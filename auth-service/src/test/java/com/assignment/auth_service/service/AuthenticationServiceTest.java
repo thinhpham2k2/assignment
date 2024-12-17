@@ -6,6 +6,7 @@ import com.assignment.auth_service.entity.Account;
 import com.assignment.auth_service.mapper.AccountMapper;
 import com.assignment.auth_service.rabbitmq.publisher.RabbitMQProducer;
 import com.assignment.auth_service.repository.AccountRepository;
+import com.assignment.auth_service.service.interfaces.AuthenticationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ class AuthenticationServiceTest {
     private AccountRepository accountRepository;
 
     @Autowired
-    private AuthenticationServiceImpl authenticationService;
+    private AuthenticationService authenticationService;
 
     @Test
     void registerTest() {
