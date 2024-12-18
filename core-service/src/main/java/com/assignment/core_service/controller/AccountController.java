@@ -16,7 +16,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +41,7 @@ public class AccountController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success", content =
                     {@Content(mediaType = "application/json", schema =
-                    @Schema(implementation = PagedModel.class))}),
+                    @Schema(implementation = PagedDTO.class))}),
             @ApiResponse(responseCode = "400", description = "Bad Request", content =
                     {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content =
