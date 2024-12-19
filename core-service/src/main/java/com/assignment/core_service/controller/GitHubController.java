@@ -1,8 +1,12 @@
 package com.assignment.core_service.controller;
 
 import com.assignment.core_service.dto.response.GitHubUserDTO;
+import com.assignment.core_service.entity.Supplier;
 import com.assignment.core_service.service.interfaces.GitHubService;
 import com.assignment.core_service.util.Constant;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,12 +17,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,22 +43,83 @@ public class GitHubController {
                     @Schema(implementation = GitHubUserDTO.class))}),
             @ApiResponse(responseCode = "400", description = "Bad Request", content =
                     {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
-            @ApiResponse(responseCode = "404", description = "Not Found", content =
-                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content =
                     {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
     })
     public ResponseEntity<?> getGithubUserProfile(@PathVariable String username) {
 
         GitHubUserDTO githubUserProfile = gitHubService.getGithubUserProfile(username);
+        return ResponseEntity.status(HttpStatus.OK).body(githubUserProfile);
+    }
 
-        if (githubUserProfile != null) {
+    @GetMapping("/circuit-breaker/users/{username}")
+    @CircuitBreaker(name = "gitHubController")
+    @Operation(summary = "Get GitHub profile (Circuit Breaker Pattern)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content =
+                    {@Content(mediaType = "application/json", schema =
+                    @Schema(implementation = GitHubUserDTO.class))}),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "503", description = "Service Unavailable", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+    })
+    public ResponseEntity<?> getGithubUserProfileCircuitBreaker(@PathVariable String username) {
 
-            return ResponseEntity.status(HttpStatus.OK).body(githubUserProfile);
-        } else {
+        GitHubUserDTO githubUserProfile = gitHubService.getGithubUserProfile(username);
+        return ResponseEntity.status(HttpStatus.OK).body(githubUserProfile);
+    }
 
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.TEXT_PLAIN).body(
-                    messageSource.getMessage(Constant.INVALID_GITHUB_PROFILE, null, LocaleContextHolder.getLocale()));
-        }
+    @GetMapping("/retry/users/{username}")
+    @Retry(name = "gitHubController", fallbackMethod = "fallbackAfterRetry")
+    @Operation(summary = "Get GitHub profile (Retry Pattern)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content =
+                    {@Content(mediaType = "application/json", schema =
+                    @Schema(implementation = GitHubUserDTO.class))}),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+    })
+    public ResponseEntity<?> getGithubUserProfileRetry(@PathVariable String username) {
+
+        GitHubUserDTO githubUserProfile = gitHubService.getGithubUserProfile(username);
+        return ResponseEntity.status(HttpStatus.OK).body(githubUserProfile);
+    }
+
+    public String fallbackAfterRetry(Exception ex) {
+
+        return messageSource.getMessage(Constant.SERVICE_UNAVAILABLE, null, LocaleContextHolder.getLocale());
+    }
+
+    @GetMapping("/time-limiter/users/{username}")
+    @TimeLimiter(name = "gitHubController")
+    @Operation(summary = "Get GitHub profile (Time Limiter Pattern)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content =
+                    {@Content(mediaType = "application/json", schema =
+                    @Schema(implementation = GitHubUserDTO.class))}),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "408", description = "Request Timeout", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+    })
+    public CompletableFuture<?> getGithubUserProfileTimeLimiter(@PathVariable String username) {
+
+        gitHubService.getGithubUserProfile(username);
+        return CompletableFuture.supplyAsync(() -> {
+
+            try {
+
+                Thread.sleep(5000);
+            } catch (InterruptedException ignored) {
+            }
+            return new Supplier();
+        });
     }
 }

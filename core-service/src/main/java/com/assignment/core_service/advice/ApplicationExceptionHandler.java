@@ -1,6 +1,9 @@
 package com.assignment.core_service.advice;
 
 import com.assignment.core_service.util.Constant;
+import io.github.resilience4j.bulkhead.BulkheadFullException;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -16,17 +19,45 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.security.InvalidParameterException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class ApplicationExceptionHandler {
 
     private final MessageSource messageSource;
+
+    @ExceptionHandler({CallNotPermittedException.class})
+    public ResponseEntity<?> handleCallNotPermittedException(CallNotPermittedException ex) {
+
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).contentType(MediaType.TEXT_PLAIN)
+                .body(messageSource.getMessage(Constant.SERVICE_UNAVAILABLE, null, LocaleContextHolder.getLocale()));
+    }
+
+    @ExceptionHandler({TimeoutException.class})
+    public ResponseEntity<?> handleTimeoutException(TimeoutException ex) {
+
+        return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).contentType(MediaType.TEXT_PLAIN)
+                .body(messageSource.getMessage(Constant.REQUEST_TIMEOUT, null, LocaleContextHolder.getLocale()));
+    }
+
+    @ExceptionHandler({BulkheadFullException.class})
+    public ResponseEntity<?> handleBulkheadFullException(BulkheadFullException ex) {
+
+        return ResponseEntity.status(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED).contentType(MediaType.TEXT_PLAIN)
+                .body(messageSource.getMessage(Constant.BANDWIDTH_LIMIT_EXCEEDED, null, LocaleContextHolder.getLocale()));
+    }
+
+    @ExceptionHandler({RequestNotPermitted.class})
+    public ResponseEntity<?> handleRequestNotPermitted(RequestNotPermitted ex) {
+
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).contentType(MediaType.TEXT_PLAIN)
+                .body(messageSource.getMessage(Constant.TOO_MANY_REQUESTS, null, LocaleContextHolder.getLocale()));
+    }
 
     @ExceptionHandler(InvalidParameterException.class)
     public ResponseEntity<?> handleInvalidParameterException(InvalidParameterException ex) {
@@ -41,8 +72,8 @@ public class ApplicationExceptionHandler {
                 .body(messageSource.getMessage(Constant.INVALID_PARAMETER, null, LocaleContextHolder.getLocale()));
     }
 
-    @ExceptionHandler(SQLException.class)
-    public ResponseEntity<?> handleSQLException(SQLException ex) {
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<?> handleRuntimeException(RuntimeException ex) {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.TEXT_PLAIN)
                 .body(messageSource.getMessage(Constant.INTERNAL_SERVER_ERROR, null, LocaleContextHolder.getLocale()));

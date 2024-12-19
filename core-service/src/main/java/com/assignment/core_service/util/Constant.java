@@ -51,4 +51,8 @@ public class Constant implements Serializable {
     public static final String INVALID_ACCOUNT = "message.invalid.account";
     public static final String INVALID_PRODUCT = "message.invalid.product";
     public static final String INVALID_GITHUB_PROFILE = "message.invalid.github.profile";
+    public static final String SERVICE_UNAVAILABLE = "message.service.unavailable";
+    public static final String REQUEST_TIMEOUT = "message.request.timeout";
+    public static final String BANDWIDTH_LIMIT_EXCEEDED = "message.bandwidth.limit.exceeded";
+    public static final String TOO_MANY_REQUESTS = "message.too.many.requests";
 }

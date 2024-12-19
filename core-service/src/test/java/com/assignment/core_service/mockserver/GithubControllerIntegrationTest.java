@@ -82,7 +82,22 @@ public class GithubControllerIntegrationTest {
     }
 
     @Test
-    void shouldGetFailureResponseWhenGitHubApiFailed() throws Exception {
+    void shouldGetFailureResponseWhenGitHubApiFailedFirst() throws Exception {
+
+        String username = "thinhpham2k2";
+        mockServer.when(HttpRequest.request().withMethod("GET").withPath("/users/.*"))
+                .respond(HttpResponse.response().withStatusCode(404));
+
+        String expectedError = "Fail to fetch GitHub profile";
+        this.mockMvc.perform(get("/api/v1/core/github/users/{username}", username)
+                        .header("Accept-Language", "en"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("text/plain"))
+                .andExpect(content().string(expectedError));
+    }
+
+    @Test
+    void shouldGetFailureResponseWhenGitHubApiFailedSecond() throws Exception {
 
         String username = "thinhpham2k2";
         mockServer.when(HttpRequest.request().withMethod("GET").withPath("/users/.*"))
@@ -91,7 +106,7 @@ public class GithubControllerIntegrationTest {
         String expectedError = "Fail to fetch GitHub profile";
         this.mockMvc.perform(get("/api/v1/core/github/users/{username}", username)
                         .header("Accept-Language", "en"))
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("text/plain"))
                 .andExpect(content().string(expectedError));
     }

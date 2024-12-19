@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,12 +27,12 @@ public class GitHubServiceImpl implements GitHubService {
 
         try {
 
-            System.out.println("Github API BaseUrl:" + githubApiBaseUrl);
-            RestTemplate restTemplate = new RestTemplate();
-            return restTemplate.getForObject(githubApiBaseUrl + "/users/" + username, GitHubUserDTO.class);
-        } catch (RuntimeException e) {
+            ResponseEntity<GitHubUserDTO> rs = new RestTemplate().getForEntity(
+                    githubApiBaseUrl + "/users/" + username, GitHubUserDTO.class);
 
-            System.out.println("Fail to fetch github profile");
+            return rs.getBody();
+        } catch (Exception e) {
+
             throw new InvalidParameterException(
                     messageSource.getMessage(Constant.INVALID_GITHUB_PROFILE, null, LocaleContextHolder.getLocale()));
         }
