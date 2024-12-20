@@ -158,6 +158,12 @@
             <artifactId>spring-cloud-starter-vault-config</artifactId>
             <version>4.2.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.temporal</groupId>
+            <artifactId>temporal-sdk</artifactId>
+            <version>1.27.0</version>
+        </dependency>
     </dependencies>
 
     <build>

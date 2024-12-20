@@ -128,7 +128,7 @@ services:
       - ./init-vault.sh:/init-vault.sh:rw
     cap_add:
       - IPC_LOCK
-    command: ["sh", "-c", "vault server -dev -dev-listen-address=0.0.0.0:8200 & sleep 5 && /init-vault.sh && tail -f /dev/null"]
+    command: [ "sh", "-c", "vault server -dev -dev-listen-address=0.0.0.0:8200 & sleep 5 && /init-vault.sh && tail -f /dev/null" ]
     networks:
       - microservice_networks
 
@@ -138,7 +138,7 @@ services:
     restart: always
     ports:
       - "6379:6379"
-    command: ["bash", "-c", "redis-server --appendonly yes --requirepass 12345"]
+    command: [ "bash", "-c", "redis-server --appendonly yes --requirepass 12345" ]
     volumes:
       - cache:/data
     networks:
@@ -151,6 +151,51 @@ services:
       - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - microservice_networks
+
+  temporal:
+    container_name: temporal
+    image: temporalio/auto-setup:latest
+    ports:
+      - "7233:7233"
+    environment:
+      - DB=mysql8
+      - DB_PORT=3306
+      - MYSQL_USER=root
+      - MYSQL_PWD=12345
+      - MYSQL_SEEDS=database
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development_es.yaml
+    volumes:
+      - ./dynamicconfig:/etc/temporal/config/dynamicconfig
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - microservice_networks
+
+  temporal-admin-tools:
+    container_name: temporal-admin-tools
+    image: temporalio/admin-tools:latest
+    environment:
+      - TEMPORAL_CLI_ADDRESS=temporal:7233
+    depends_on:
+      - temporal
+    stdin_open: true
+    tty: true
+    networks:
+      - microservice_networks
+
+  temporal-web:
+    container_name: temporal-web
+    image: temporalio/web:latest
+    ports:
+      - "8088:8088"
+    environment:
+      - TEMPORAL_GRPC_ENDPOINT=temporal:7233
+      - TEMPORAL_PERMIT_WRITE_API=true
+    depends_on:
+      - temporal
     networks:
       - microservice_networks
 
