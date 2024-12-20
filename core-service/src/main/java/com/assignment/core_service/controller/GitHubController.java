@@ -4,7 +4,9 @@ import com.assignment.core_service.dto.response.GitHubUserDTO;
 import com.assignment.core_service.entity.Supplier;
 import com.assignment.core_service.service.interfaces.GitHubService;
 import com.assignment.core_service.util.Constant;
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import io.swagger.v3.oas.annotations.Operation;
@@ -121,5 +123,45 @@ public class GitHubController {
             }
             return new Supplier();
         });
+    }
+
+    @GetMapping("/bulkhead/users/{username}")
+    @Bulkhead(name = "gitHubController")
+    @Operation(summary = "Get GitHub profile (Bulkhead Pattern)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content =
+                    {@Content(mediaType = "application/json", schema =
+                    @Schema(implementation = GitHubUserDTO.class))}),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "509", description = "Bandwidth Limit Exceeded", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+    })
+    public ResponseEntity<?> getGithubUserProfileBulkhead(@PathVariable String username) {
+
+        GitHubUserDTO githubUserProfile = gitHubService.getGithubUserProfile(username);
+        return ResponseEntity.status(HttpStatus.OK).body(githubUserProfile);
+    }
+
+    @GetMapping("/rate-limiter/users/{username}")
+    @RateLimiter(name = "gitHubController")
+    @Operation(summary = "Get GitHub profile (Rate Limiter Pattern)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success", content =
+                    {@Content(mediaType = "application/json", schema =
+                    @Schema(implementation = GitHubUserDTO.class))}),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "429", description = "Too Many Requests", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content =
+                    {@Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))}),
+    })
+    public ResponseEntity<?> getGithubUserProfileRateLimiter(@PathVariable String username) {
+
+        GitHubUserDTO githubUserProfile = gitHubService.getGithubUserProfile(username);
+        return ResponseEntity.status(HttpStatus.OK).body(githubUserProfile);
     }
 }

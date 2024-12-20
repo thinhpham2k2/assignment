@@ -1,10 +1,7 @@
 package com.assignment.core_service.resilience4j;
 
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
@@ -12,9 +9,17 @@ import org.mockserver.verify.VerificationTimes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -86,7 +91,7 @@ public class GitHubControllerTest {
                 .respond(HttpResponse.response().withStatusCode(200));
 
         this.mockMvc.perform(get("/api/v1/core/github/retry/users/{username}", username)
-                        .header("Accept-Language", "en"));
+                .header("Accept-Language", "en"));
 
         mockServer.verify(HttpRequest.request().withMethod("GET").withPath("/users/.*"),
                 VerificationTimes.exactly(1));
@@ -116,5 +121,70 @@ public class GitHubControllerTest {
 
         mockServer.verify(HttpRequest.request().withMethod("GET").withPath("/users/.*"),
                 VerificationTimes.exactly(1));
+    }
+
+    @Test
+    void testBulkhead() throws Exception {
+
+        String username = "thinhpham2k2";
+        mockServer.when(HttpRequest.request().withMethod("GET").withPath("/users/.*"))
+                .respond(HttpResponse.response().withStatusCode(200));
+
+        Map<Integer, Integer> responseStatusCount = new ConcurrentHashMap<>();
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
+        CountDownLatch latch = new CountDownLatch(5);
+
+        for (int i = 0; i < 5; i++) {
+
+            executorService.execute(() -> {
+
+                try {
+
+                    ResultActions resultActions = this.mockMvc.perform(get(
+                            "/api/v1/core/github/bulkhead/users/{username}", username)
+                            .header("Accept-Language", "en"));
+
+                    int statusCode = resultActions.andReturn().getResponse().getStatus();
+                    responseStatusCount.merge(statusCode, 1, Integer::sum);
+                    latch.countDown();
+                } catch (Exception ignored) {
+                }
+            });
+        }
+        latch.await();
+        executorService.shutdown();
+
+        Assertions.assertEquals(2, responseStatusCount.size());
+        Assertions.assertTrue(responseStatusCount.containsKey(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED.value()));
+        Assertions.assertTrue(responseStatusCount.containsKey(HttpStatus.OK.value()));
+
+        mockServer.verify(HttpRequest.request().withMethod("GET").withPath("/users/.*"),
+                VerificationTimes.exactly(3));
+    }
+
+    @Test
+    void testRateLimiter() throws Exception {
+
+        String username = "thinhpham2k2";
+        mockServer.when(HttpRequest.request().withMethod("GET").withPath("/users/.*"))
+                .respond(HttpResponse.response().withStatusCode(200));
+
+        Map<Integer, Integer> responseStatusCount = new ConcurrentHashMap<>();
+        for (int i = 0; i < 10; i++){
+
+            ResultActions resultActions = this.mockMvc.perform(get(
+                    "/api/v1/core/github/rate-limiter/users/{username}", username)
+                    .header("Accept-Language", "en"));
+
+            int statusCode = resultActions.andReturn().getResponse().getStatus();
+            responseStatusCount.merge(statusCode, 1, Integer::sum);
+        }
+
+        Assertions.assertEquals(2, responseStatusCount.size());
+        Assertions.assertTrue(responseStatusCount.containsKey(HttpStatus.TOO_MANY_REQUESTS.value()));
+        Assertions.assertTrue(responseStatusCount.containsKey(HttpStatus.OK.value()));
+
+        mockServer.verify(HttpRequest.request().withMethod("GET").withPath("/users/.*"),
+                VerificationTimes.exactly(5));
     }
 }
