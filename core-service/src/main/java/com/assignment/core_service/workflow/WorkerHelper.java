@@ -6,21 +6,27 @@ import io.temporal.client.WorkflowOptions;
 import io.temporal.common.RetryOptions;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.serviceclient.WorkflowServiceStubsOptions;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 
+@Component
 public class WorkerHelper {
+
+    @Value("${temporal.serviceAddress}")
+    private String target;
 
     public static final String WORKFLOW_ACCOUNT_TASK_QUEUE = "AccountTaskQueue";
 
-    public static RetryOptions retryoptions = RetryOptions.newBuilder()
+    public RetryOptions retryoptions = RetryOptions.newBuilder()
             .setInitialInterval(Duration.ofSeconds(1))
             .setMaximumInterval(Duration.ofSeconds(100))
             .setBackoffCoefficient(2)
             .setMaximumAttempts(500)
             .build();
 
-    private static WorkflowOptions getWorkflowOptions(String taskQueue, String workflowId) {
+    private WorkflowOptions getWorkflowOptions(String taskQueue, String workflowId) {
         var builder = WorkflowOptions.newBuilder();
 
         builder.setWorkflowId(workflowId);
@@ -30,14 +36,15 @@ public class WorkerHelper {
         return builder.build();
     }
 
-    public static WorkflowClient getWorkflowClient() {
+    public WorkflowClient getWorkflowClient() {
         WorkflowServiceStubs service = WorkflowServiceStubs.newServiceStubs(WorkflowServiceStubsOptions.newBuilder()
+                .setTarget(target)
                 .setEnableHttps(false)
                 .build());
         return WorkflowClient.newInstance(service);
     }
 
-    public static ActivityOptions defaultActivityOptions() {
+    public ActivityOptions defaultActivityOptions() {
         return
                 ActivityOptions.newBuilder()
                         // Timeout options specify when to automatically timeout Activities if the process is taking too long.

@@ -36,6 +36,8 @@ services:
         condition: service_healthy
       vault:
         condition: service_started
+      temporal:
+        condition: service_started
     networks:
       - microservice_networks
 
@@ -57,6 +59,8 @@ services:
       database:
         condition: service_healthy
       vault:
+        condition: service_started
+      temporal:
         condition: service_started
     networks:
       - microservice_networks

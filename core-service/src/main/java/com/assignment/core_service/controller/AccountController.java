@@ -37,6 +37,8 @@ public class AccountController {
 
     private final MessageSource messageSource;
 
+    private final WorkerHelper workerHelper;
+
     private final AccountService accountService;
 
     @GetMapping("")
@@ -153,7 +155,7 @@ public class AccountController {
 
         accountService.update(update, id);
 
-        var workflowClient = WorkerHelper.getWorkflowClient();
+        var workflowClient = workerHelper.getWorkflowClient();
 
         WorkflowOptions options = WorkflowOptions.newBuilder()
                 .setTaskQueue(WorkerHelper.WORKFLOW_ACCOUNT_TASK_QUEUE)
