@@ -61,7 +61,7 @@ public class AccessLogFilter extends OncePerRequestFilter {
                                 Method: {}\s
                                 Path: {}\s
                                 Parameters: {}\s
-                                Content-type: {}\s
+                                Content type: {}\s
                                 Status code: {}\s
                                 Time: {}ms\s
                                 Request body: {}\s
