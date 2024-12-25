@@ -1,4 +1,4 @@
-# [Report file](https://github.com/user-attachments/files/18245363/KLB.-.Ph.m.Qu.c.Th.nh.pdf)
+# [Report file (Download)](https://github.com/user-attachments/files/18245363/KLB.-.Ph.m.Qu.c.Th.nh.pdf)
 
 ![1](https://github.com/user-attachments/assets/7aabb7b2-b209-4371-be57-8a1e6a927cdc)
 ![2](https://github.com/user-attachments/assets/ad7cfe1d-2da9-413d-8ff7-e2e8dd8daabb)
