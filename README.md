@@ -1,5 +1,4 @@
-# Description
-[Report file](https://github.com/user-attachments/files/18245363/KLB.-.Ph.m.Qu.c.Th.nh.pdf)
+# [Report file](https://github.com/user-attachments/files/18245363/KLB.-.Ph.m.Qu.c.Th.nh.pdf)
 ![16](https://github.com/user-attachments/assets/41220da4-ff6b-40cf-919a-081393009c1e)
 ![17](https://github.com/user-attachments/assets/bd186c07-efcb-4afa-bb55-1135b7348ddc)
 ![18](https://github.com/user-attachments/assets/26c3d09a-91ee-471d-904f-ec1017b10daf)
