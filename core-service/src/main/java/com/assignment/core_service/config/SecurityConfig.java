@@ -43,10 +43,10 @@ public class SecurityConfig {
         http.cors(AbstractHttpConfigurer::disable).csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(unauthenticatedRequest).permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/core/categories").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/core/suppliers").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/core/products/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/core/github/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/categories").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/suppliers").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/github/**").permitAll()
                 .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider)

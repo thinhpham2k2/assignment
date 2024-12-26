@@ -27,7 +27,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "\uD83D\uDE9A Supplier API")
-@RequestMapping("/api/v1/core/suppliers")
+@RequestMapping("/api/v1/suppliers")
 public class SupplierController {
 
     private final MessageSource messageSource;

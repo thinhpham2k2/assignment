@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
         servers = {
                 @Server(
                         description = "API Gateway",
-                        url = "http://localhost:8080"
+                        url = "http://localhost:8080/auth"
                 ),
                 @Server(
                         description = "Local Environment",

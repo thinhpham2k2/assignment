@@ -30,7 +30,7 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "#\uFE0F⃣ GitHub API")
-@RequestMapping("/api/v1/core/github")
+@RequestMapping("/api/v1/github")
 public class GitHubController {
 
     private final GitHubService gitHubService;

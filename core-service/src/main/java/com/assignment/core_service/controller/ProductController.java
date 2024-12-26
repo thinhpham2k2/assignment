@@ -30,7 +30,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "\uD83D\uDCE6 Product API")
-@RequestMapping("/api/v1/core/products")
+@RequestMapping("/api/v1/products")
 public class ProductController {
 
     private final MessageSource messageSource;

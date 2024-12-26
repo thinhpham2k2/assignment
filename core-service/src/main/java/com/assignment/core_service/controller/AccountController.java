@@ -31,7 +31,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "\uD83D\uDC64 Account API")
-@RequestMapping("/api/v1/core/accounts")
+@RequestMapping("/api/v1/accounts")
 @SecurityRequirement(name = "Authorization")
 public class AccountController {
 

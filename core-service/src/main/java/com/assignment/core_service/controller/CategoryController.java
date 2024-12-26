@@ -27,7 +27,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "\uD83C\uDFF7 Category API")
-@RequestMapping("/api/v1/core/categories")
+@RequestMapping("/api/v1/categories")
 public class CategoryController {
 
     private final MessageSource messageSource;

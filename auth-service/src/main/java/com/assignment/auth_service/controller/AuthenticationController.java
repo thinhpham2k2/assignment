@@ -30,7 +30,7 @@ import java.util.HashMap;
 
 @RestController
 @Tag(name = "\uD83D\uDD10 Authenticate API")
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class AuthenticationController {
 
