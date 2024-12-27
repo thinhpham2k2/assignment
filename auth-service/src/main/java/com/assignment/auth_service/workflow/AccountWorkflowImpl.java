@@ -1,8 +1,8 @@
 package com.assignment.auth_service.workflow;
 
-import com.assignment.auth_service.activity.interfaces.AccountActivity;
-import com.assignment.auth_service.dto.account.UpdateAccountDTO;
 import com.assignment.auth_service.workflow.interfaces.AccountWorkflow;
+import com.assignment.common_library.activity.AccountActivity;
+import com.assignment.common_library.dto.account.UpdateAccountDTO;
 import io.temporal.activity.ActivityOptions;
 import io.temporal.common.RetryOptions;
 import io.temporal.workflow.Workflow;

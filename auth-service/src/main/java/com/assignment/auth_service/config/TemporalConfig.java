@@ -1,8 +1,8 @@
 package com.assignment.auth_service.config;
 
-import com.assignment.auth_service.activity.interfaces.AccountActivity;
 import com.assignment.auth_service.workflow.AccountWorkflowImpl;
 import com.assignment.auth_service.workflow.WorkerHelper;
+import com.assignment.common_library.activity.AccountActivity;
 import io.temporal.client.WorkflowClient;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.serviceclient.WorkflowServiceStubsOptions;

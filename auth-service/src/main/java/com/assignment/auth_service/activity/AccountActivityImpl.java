@@ -1,10 +1,10 @@
 package com.assignment.auth_service.activity;
 
-import com.assignment.auth_service.activity.interfaces.AccountActivity;
-import com.assignment.auth_service.dto.account.UpdateAccountDTO;
 import com.assignment.auth_service.entity.Account;
 import com.assignment.auth_service.mapper.AccountMapper;
 import com.assignment.auth_service.repository.AccountRepository;
+import com.assignment.common_library.activity.AccountActivity;
+import com.assignment.common_library.dto.account.UpdateAccountDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

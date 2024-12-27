@@ -1,11 +1,12 @@
-package com.assignment.auth_service.activity.interfaces;
+package com.assignment.common_library.activity;
 
-import com.assignment.auth_service.dto.account.UpdateAccountDTO;
+import com.assignment.common_library.dto.account.UpdateAccountDTO;
 import io.temporal.activity.ActivityInterface;
 import io.temporal.activity.ActivityMethod;
 
 @ActivityInterface
 public interface AccountActivity {
+
 
     @ActivityMethod
     void updateAccount(UpdateAccountDTO update, long id);

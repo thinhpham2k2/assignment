@@ -2,7 +2,6 @@ package com.assignment.auth_service.mapper;
 
 import com.assignment.auth_service.dto.account.AccountDTO;
 import com.assignment.auth_service.dto.account.CreateAccountDTO;
-import com.assignment.auth_service.dto.account.UpdateAccountDTO;
 import com.assignment.auth_service.entity.Account;
 import com.assignment.auth_service.entity.Role;
 import org.mapstruct.Mapper;
@@ -21,7 +20,7 @@ public interface AccountMapper {
     @Mapping(target = "status", expression = "java(true)")
     Account createToEntity(CreateAccountDTO create);
 
-    Account updateToEntity(UpdateAccountDTO update, @MappingTarget Account entity);
+    Account updateToEntity(Object update, @MappingTarget Account entity);
 
     @Named("mapRole")
     default Role mapRole(){
