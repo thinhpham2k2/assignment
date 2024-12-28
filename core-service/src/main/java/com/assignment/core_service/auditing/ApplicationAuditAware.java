@@ -11,7 +11,7 @@ import java.util.Optional;
 public class ApplicationAuditAware implements AuditorAware<Account> {
 
     @Override
-    public Optional<Account> getCurrentAuditor  () {
+    public Optional<Account> getCurrentAuditor() {
 
         Authentication authentication =
                 SecurityContextHolder

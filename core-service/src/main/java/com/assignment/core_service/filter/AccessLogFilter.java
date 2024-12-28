@@ -56,7 +56,7 @@ public class AccessLogFilter extends OncePerRequestFilter {
                 String responseBodyJson = gson.toJson(json);
 
                 log.info(""" 
-                                
+                                                                
                                 Client IP: {}\s
                                 Method: {}\s
                                 Path: {}\s

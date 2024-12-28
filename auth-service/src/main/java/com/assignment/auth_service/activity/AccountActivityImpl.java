@@ -1,10 +1,10 @@
 package com.assignment.auth_service.activity;
 
+import com.assignment.auth_service.dto.account.UpdateAccountDTO;
 import com.assignment.auth_service.entity.Account;
 import com.assignment.auth_service.mapper.AccountMapper;
 import com.assignment.auth_service.repository.AccountRepository;
 import com.assignment.common_library.activity.AccountActivity;
-import com.assignment.common_library.dto.account.UpdateAccountDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -25,14 +25,14 @@ public class AccountActivityImpl implements AccountActivity {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountActivityImpl.class);
 
     @Override
-    public void updateAccount(UpdateAccountDTO update, long id) {
+    public void updateAccount(Object update, long id) {
 
         Optional<Account> account = accountRepository.findByIdAndStatus(id, true);
         if (account.isPresent()) {
 
             try {
 
-                accountRepository.save(accountMapper.updateToEntity(update, account.get()));
+                accountRepository.save(accountMapper.updateToEntity((UpdateAccountDTO) update, account.get()));
             } catch (Exception e) {
 
                 LOGGER.info("Update account fail with id: {}", id);

@@ -1,13 +1,13 @@
 package com.assignment.core_service.controller;
 
+import com.assignment.common_library.workflow.WorkerHelper;
+import com.assignment.common_library.workflow.interfaces.AccountWorkflow;
 import com.assignment.core_service.dto.account.AccountDTO;
 import com.assignment.core_service.dto.account.CreateAccountDTO;
 import com.assignment.core_service.dto.account.UpdateAccountDTO;
 import com.assignment.core_service.dto.response.PagedDTO;
 import com.assignment.core_service.service.interfaces.AccountService;
 import com.assignment.core_service.util.Constant;
-import com.assignment.core_service.workflow.WorkerHelper;
-import com.assignment.core_service.workflow.interfaces.AccountWorkflow;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.temporal.client.WorkflowClient;
 import io.temporal.client.WorkflowOptions;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -35,9 +36,10 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @SecurityRequirement(name = "Authorization")
 public class AccountController {
 
-    private final MessageSource messageSource;
+    @Value("${temporal.serviceAddress}")
+    private String target;
 
-    private final WorkerHelper workerHelper;
+    private final MessageSource messageSource;
 
     private final AccountService accountService;
 
@@ -155,7 +157,7 @@ public class AccountController {
 
         accountService.update(update, id);
 
-        var workflowClient = workerHelper.getWorkflowClient();
+        var workflowClient = WorkerHelper.getWorkflowClient(target);
 
         WorkflowOptions options = WorkflowOptions.newBuilder()
                 .setTaskQueue(WorkerHelper.WORKFLOW_ACCOUNT_TASK_QUEUE)

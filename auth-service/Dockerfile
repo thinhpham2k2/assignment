@@ -1,11 +1,11 @@
-# Stage 1: Build Common Library
+# Stage 1: Use Maven for building common library
 FROM maven:3.9.9-sapmachine-17 AS common-lib-build
 WORKDIR /app
 COPY ./common-library/ ./common-library
 WORKDIR /app/common-library
 RUN mvn clean package
 
-# Stage 2: Use Maven for building
+# Stage 2: Use Maven for building authenticate service
 FROM maven:3.9.9-sapmachine-17 AS build
 LABEL authors="ctv"
 WORKDIR /app

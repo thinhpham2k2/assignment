@@ -43,7 +43,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public AuditorAware<Account> auditorAware(){
+    public AuditorAware<Account> auditorAware() {
 
         return new ApplicationAuditAware();
     }

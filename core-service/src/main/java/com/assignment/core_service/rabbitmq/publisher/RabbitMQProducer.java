@@ -1,5 +1,6 @@
 package com.assignment.core_service.rabbitmq.publisher;
 
+import com.assignment.core_service.dto.account.CreateAccountDTO;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ public class RabbitMQProducer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQProducer.class);
 
-    public void sendMessage(com.assignment.core_service.dto.account.CreateAccountDTO dto){
+    public void sendMessage(CreateAccountDTO dto) {
 
         LOGGER.info("Message sent -> {}", dto.toString());
         rabbitTemplate.convertAndSend(exchange, routingKey, dto);

@@ -1,8 +1,7 @@
-package com.assignment.auth_service.workflow;
+package com.assignment.common_library.workflow;
 
-import com.assignment.auth_service.workflow.interfaces.AccountWorkflow;
 import com.assignment.common_library.activity.AccountActivity;
-import com.assignment.common_library.dto.account.UpdateAccountDTO;
+import com.assignment.common_library.workflow.interfaces.AccountWorkflow;
 import io.temporal.activity.ActivityOptions;
 import io.temporal.common.RetryOptions;
 import io.temporal.workflow.Workflow;
@@ -26,9 +25,8 @@ public class AccountWorkflowImpl implements AccountWorkflow {
     private final AccountActivity accountActivity = Workflow.newActivityStub(AccountActivity.class, defaultActivityOptions);
 
     @Override
-    public void processUpdateAccount(UpdateAccountDTO update, long id) {
+    public void processUpdateAccount(Object update, long id) {
 
-        System.out.println("Da toi core");
         accountActivity.updateAccount(update, id);
     }
 }

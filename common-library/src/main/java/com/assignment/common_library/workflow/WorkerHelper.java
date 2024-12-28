@@ -1,4 +1,4 @@
-package com.assignment.auth_service.workflow;
+package com.assignment.common_library.workflow;
 
 import io.temporal.activity.ActivityOptions;
 import io.temporal.client.WorkflowClient;
@@ -25,13 +25,14 @@ public class WorkerHelper {
 
         builder.setWorkflowId(workflowId);
         builder.setTaskQueue(taskQueue);
-        builder.setWorkflowRunTimeout(Duration.ofMinutes(5));
-        builder.setWorkflowTaskTimeout(Duration.ofMinutes(1));
+        builder.setWorkflowRunTimeout(java.time.Duration.ofMinutes(5));
+        builder.setWorkflowTaskTimeout(java.time.Duration.ofMinutes(1));
         return builder.build();
     }
 
-    public static WorkflowClient getWorkflowClient() {
+    public static WorkflowClient getWorkflowClient(String target) {
         WorkflowServiceStubs service = WorkflowServiceStubs.newServiceStubs(WorkflowServiceStubsOptions.newBuilder()
+                .setTarget(target)
                 .setEnableHttps(false)
                 .build());
         return WorkflowClient.newInstance(service);
