@@ -68,8 +68,8 @@ services:
   gateway:
     container_name: gateway-service
     build:
-      context: ./api-gateway
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./api-gateway/Dockerfile
     environment:
       - DOCKER_HOST=host.docker.internal
     ports:
