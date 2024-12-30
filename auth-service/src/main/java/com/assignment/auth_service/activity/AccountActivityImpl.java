@@ -1,6 +1,5 @@
 package com.assignment.auth_service.activity;
 
-import com.assignment.auth_service.dto.account.UpdateAccountDTO;
 import com.assignment.auth_service.entity.Account;
 import com.assignment.auth_service.mapper.AccountMapper;
 import com.assignment.auth_service.repository.AccountRepository;
@@ -11,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -25,6 +25,7 @@ public class AccountActivityImpl implements AccountActivity {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountActivityImpl.class);
 
     @Override
+//    @SuppressWarnings("unchecked")
     public void updateAccount(Object update, long id) {
 
         Optional<Account> account = accountRepository.findByIdAndStatus(id, true);
@@ -32,7 +33,8 @@ public class AccountActivityImpl implements AccountActivity {
 
             try {
 
-                accountRepository.save(accountMapper.updateToEntity((UpdateAccountDTO) update, account.get()));
+                accountRepository.save(accountMapper.updateToEntity(
+                        accountMapper.objectToUpdate((Map<?, ?>) update), account.get()));
             } catch (Exception e) {
 
                 LOGGER.info("Update account fail with id: {}", id);

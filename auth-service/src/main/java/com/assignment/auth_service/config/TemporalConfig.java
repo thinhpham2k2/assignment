@@ -26,6 +26,7 @@ public class TemporalConfig {
     public void startWorkers() {
 
         try {
+
             var stub = WorkflowServiceStubs.newServiceStubs(WorkflowServiceStubsOptions.newBuilder()
                     .setTarget(target)
                     .setEnableHttps(false)

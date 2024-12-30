@@ -2,6 +2,7 @@ package com.assignment.core_service.rabbitmq.config;
 
 import brave.Tracing;
 import brave.spring.rabbit.SpringRabbitTracing;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.config.ContainerCustomizer;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -60,7 +61,7 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, SpringRabbitTracing tracing) {
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, @NotNull SpringRabbitTracing tracing) {
 
         RabbitTemplate rabbitTemplate = tracing.newRabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(converter());

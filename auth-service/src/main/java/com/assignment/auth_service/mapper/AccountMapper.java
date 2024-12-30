@@ -10,6 +10,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
+import java.util.Map;
+
 @Mapper(componentModel = "spring")
 public interface AccountMapper {
 
@@ -23,9 +25,21 @@ public interface AccountMapper {
 
     Account updateToEntity(UpdateAccountDTO update, @MappingTarget Account entity);
 
+    @Mapping(target = "role", expression = "java(mapRole(map.get(\"role\")))")
+    @Mapping(target = "phone", expression = "java((String) map.get(\"phone\"))")
+    @Mapping(target = "email", expression = "java((String) map.get(\"email\"))")
+    @Mapping(target = "state", expression = "java((Boolean) map.get(\"state\"))")
+    UpdateAccountDTO objectToUpdate(Map<?, ?> map);
+
     @Named("mapRole")
-    default Role mapRole(){
+    default Role mapRole() {
 
         return Role.CUSTOMER;
+    }
+
+    @Named("mapRole")
+    default Role mapRole(Object object) {
+
+        return Role.valueOf((String) object);
     }
 }

@@ -33,7 +33,7 @@ public class AccessLogFilter extends OncePerRequestFilter {
         ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper(request);
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
 
-        if (requestWrapper.getRequestURI().toLowerCase().contains("/api")) {
+        if (requestWrapper.getRequestURI().toLowerCase().contains("/api/v1")) {
 
             long time = System.currentTimeMillis();
             try {
@@ -51,9 +51,14 @@ public class AccessLogFilter extends OncePerRequestFilter {
                 String requestBody = new String(requestWrapper.getContentAsByteArray(), request.getCharacterEncoding());
                 String responseBody = new String(responseWrapper.getContentAsByteArray(), response.getCharacterEncoding());
 
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                Object json = gson.fromJson(responseBody, Object.class);
-                String responseBodyJson = gson.toJson(json);
+                try {
+
+                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                    Object json = gson.fromJson(responseBody, Object.class);
+                    responseBody = gson.toJson(json);
+                } catch (Exception ignored) {
+
+                }
 
                 log.info(""" 
                                 
@@ -68,7 +73,7 @@ public class AccessLogFilter extends OncePerRequestFilter {
                                 Response body: {}\s""",
                         remoteIpAddress, requestWrapper.getMethod(), requestWrapper.getRequestURI(),
                         getParameter(requestWrapper.getParameterMap()), responseWrapper.getContentType(),
-                        responseWrapper.getStatus(), time, requestBody, responseBodyJson);
+                        responseWrapper.getStatus(), time, requestBody, responseBody);
                 requestWrapper.getInputStream();
                 responseWrapper.copyBodyToResponse();
             }

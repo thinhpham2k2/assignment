@@ -1,5 +1,8 @@
 package com.assignment.core_service.service;
 
+import com.assignment.common_library.AccountRequest;
+import com.assignment.common_library.AccountResponse;
+import com.assignment.common_library.AccountServiceGrpc;
 import com.assignment.core_service.dto.account.AccountDTO;
 import com.assignment.core_service.dto.account.CreateAccountDTO;
 import com.assignment.core_service.dto.account.UpdateAccountDTO;
@@ -13,9 +16,9 @@ import com.assignment.core_service.service.interfaces.PagingService;
 import com.assignment.core_service.util.Constant;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -48,6 +51,9 @@ public class AccountServiceImpl implements AccountService {
     private final RabbitMQProducer rabbitMQProducer;
 
     private final AccountRepository accountRepository;
+
+    @GrpcClient("account-service")
+    private AccountServiceGrpc.AccountServiceBlockingStub accountServiceBlockingStub;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountServiceImpl.class);
 
@@ -111,7 +117,7 @@ public class AccountServiceImpl implements AccountService {
             try {
 
                 rabbitMQProducer.sendMessage(create);
-            }catch (Exception e){
+            } catch (Exception e) {
 
                 LOGGER.info("Send message fail -> {}", create);
             }
@@ -144,7 +150,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    @CacheEvict(cacheNames = "accounts:detail", key = "#id")
+//    @CacheEvict(cacheNames = "accounts:detail", key = "#id")
     public void delete(long id) {
 
         Optional<Account> account = accountRepository.findByIdAndStatus(id, true);
@@ -152,8 +158,15 @@ public class AccountServiceImpl implements AccountService {
 
             try {
 
-                account.get().setStatus(false);
-                accountRepository.save(account.get());
+                // gRPC
+                AccountRequest request = AccountRequest.newBuilder().setId(id).build();
+                AccountResponse response = accountServiceBlockingStub.deleteAccount(request);
+
+                if (response.getIsSucceeded()) {
+
+                    account.get().setStatus(false);
+                    accountRepository.save(account.get());
+                } else throw new Exception();
             } catch (Exception e) {
 
                 throw new InvalidParameterException(

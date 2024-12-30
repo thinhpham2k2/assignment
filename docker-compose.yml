@@ -29,6 +29,7 @@ services:
       - DB_PASSWORD=12345
       - DB_URL=jdbc:mysql://database:3306/core_db
       - DOCKER_HOST=host.docker.internal
+      - AUTH_GRPC_SERVER=auth
       - RABBITMQ_USER=root
       - RABBITMQ_PASS=12345
     depends_on:
@@ -53,6 +54,7 @@ services:
       - DB_PASSWORD=12345
       - DB_URL=jdbc:mysql://database:3306/auth_db
       - DOCKER_HOST=host.docker.internal
+      - CORE_GRPC_SERVER=core
       - RABBITMQ_USER=root
       - RABBITMQ_PASS=12345
     depends_on:

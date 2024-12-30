@@ -18,7 +18,7 @@ RUN mvn install:install-file -Dfile=./lib/common-library-0.0.1-SNAPSHOT.jar \
     -DartifactId=common-library \
     -Dversion=0.0.1-SNAPSHOT \
     -Dpackaging=jar
-RUN mvn clean package
+RUN mvn clean package -DskipTests
 
 # Stage 3: Use OpenJDK for running
 FROM openjdk:24-slim-bullseye

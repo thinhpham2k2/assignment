@@ -4,6 +4,8 @@ import com.assignment.core_service.auditing.ApplicationAuditAware;
 import com.assignment.core_service.entity.Account;
 import com.assignment.core_service.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
+import net.devh.boot.grpc.server.security.authentication.BasicGrpcAuthenticationReader;
+import net.devh.boot.grpc.server.security.authentication.GrpcAuthenticationReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -46,5 +48,10 @@ public class ApplicationConfig {
     public AuditorAware<Account> auditorAware() {
 
         return new ApplicationAuditAware();
+    }
+
+    @Bean
+    public GrpcAuthenticationReader grpcAuthenticationReader(){
+        return new BasicGrpcAuthenticationReader();
     }
 }
