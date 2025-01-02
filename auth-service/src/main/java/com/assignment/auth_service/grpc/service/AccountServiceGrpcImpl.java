@@ -1,6 +1,7 @@
 package com.assignment.auth_service.grpc.service;
 
 import com.assignment.auth_service.entity.Account;
+import com.assignment.auth_service.mapper.AccountMapper;
 import com.assignment.auth_service.repository.AccountRepository;
 import com.assignment.common_library.AccountRequest;
 import com.assignment.common_library.AccountResponse;
@@ -16,6 +17,8 @@ import java.util.Optional;
 @GrpcService
 @RequiredArgsConstructor
 public class AccountServiceGrpcImpl extends AccountServiceGrpc.AccountServiceImplBase {
+
+    private final AccountMapper accountMapper;
 
     private final AccountRepository accountRepository;
 
@@ -41,8 +44,26 @@ public class AccountServiceGrpcImpl extends AccountServiceGrpc.AccountServiceImp
             log.info("Invalid account with id: {}", request.getId());
         }
         AccountResponse response = AccountResponse.newBuilder()
-                .setIsSucceeded(isSucceed)
+                .setIsDeleteSucceed(isSucceed)
                 .build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getAccountByUsername(AccountRequest request, StreamObserver<AccountResponse> responseObserver) {
+
+        Optional<Account> account = accountRepository.findByUserNameAndStatus(
+                request.getUsername(), request.getStatus());
+
+        AccountResponse response = AccountResponse.newBuilder().build();
+
+        if(account.isPresent()) {
+
+            response = accountMapper.entityToResponse(account.get());
+            log.info("Account with id {} exists", account.get().getId());
+        }
+
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }

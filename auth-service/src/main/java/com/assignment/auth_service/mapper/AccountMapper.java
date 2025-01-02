@@ -5,6 +5,7 @@ import com.assignment.auth_service.dto.account.CreateAccountDTO;
 import com.assignment.auth_service.dto.account.UpdateAccountDTO;
 import com.assignment.auth_service.entity.Account;
 import com.assignment.auth_service.entity.Role;
+import com.assignment.common_library.AccountResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -30,6 +31,9 @@ public interface AccountMapper {
     @Mapping(target = "email", expression = "java((String) map.get(\"email\"))")
     @Mapping(target = "state", expression = "java((Boolean) map.get(\"state\"))")
     UpdateAccountDTO objectToUpdate(Map<?, ?> map);
+
+    @Mapping(target = "isExist", expression = "java(true)")
+    AccountResponse entityToResponse(Account entity);
 
     @Named("mapRole")
     default Role mapRole() {

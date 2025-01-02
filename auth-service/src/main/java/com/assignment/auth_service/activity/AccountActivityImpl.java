@@ -25,7 +25,6 @@ public class AccountActivityImpl implements AccountActivity {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountActivityImpl.class);
 
     @Override
-//    @SuppressWarnings("unchecked")
     public void updateAccount(Object update, long id) {
 
         Optional<Account> account = accountRepository.findByIdAndStatus(id, true);

@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -81,7 +82,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Cacheable(cacheNames = "accounts:list")
     public PagedDTO<AccountDTO> findAllByCondition(String search, String sort, int page, int limit) {
-
+        
         if (page < 0) throw new InvalidParameterException(
                 messageSource.getMessage(Constant.INVALID_PAGE_NUMBER, null, LocaleContextHolder.getLocale()));
         if (limit < 1) throw new InvalidParameterException(
@@ -150,7 +151,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-//    @CacheEvict(cacheNames = "accounts:detail", key = "#id")
+    @CacheEvict(cacheNames = "accounts:detail", key = "#id")
     public void delete(long id) {
 
         Optional<Account> account = accountRepository.findByIdAndStatus(id, true);
@@ -162,7 +163,7 @@ public class AccountServiceImpl implements AccountService {
                 AccountRequest request = AccountRequest.newBuilder().setId(id).build();
                 AccountResponse response = accountServiceBlockingStub.deleteAccount(request);
 
-                if (response.getIsSucceeded()) {
+                if (response.getIsDeleteSucceed()) {
 
                     account.get().setStatus(false);
                     accountRepository.save(account.get());
