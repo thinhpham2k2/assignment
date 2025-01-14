@@ -10,7 +10,7 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    @Mapping(target = "role", expression = "java(mapRole(response.getRole()))")
+    @Mapping(target = "role", source = "role", qualifiedByName = "mapRole")
     CustomUserDetails responseToUserDetail(AccountResponse response);
 
     @Named("mapRole")

@@ -1,5 +1,6 @@
 package com.assignment.core_service.controller;
 
+import com.assignment.common_library.service.DemoService;
 import com.assignment.core_service.dto.product.CreateProductDTO;
 import com.assignment.core_service.dto.product.ProductDTO;
 import com.assignment.core_service.dto.product.UpdateProductDTO;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -36,6 +38,9 @@ public class ProductController {
     private final MessageSource messageSource;
 
     private final ProductService productService;
+
+    @DubboReference
+    private final DemoService demoService;
 
     @GetMapping("")
     @Operation(summary = "Get product list")
@@ -64,6 +69,8 @@ public class ProductController {
 
         PagedDTO<ProductDTO> list = productService.findAllByCondition(
                 categoryIds, supplierIds, search, sort, page, limit);
+
+        System.out.println("Core: " + demoService.sayHello("PQT"));
 
         if (!list.getContent().isEmpty()) {
 

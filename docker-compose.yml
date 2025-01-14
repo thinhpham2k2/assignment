@@ -54,7 +54,7 @@ services:
       - DB_PASSWORD=12345
       - DB_URL=jdbc:mysql://database:3306/auth_db
       - DOCKER_HOST=host.docker.internal
-      - CORE_GRPC_SERVER=core
+        - CORE_GRPC_SERVER=core
       - RABBITMQ_USER=root
       - RABBITMQ_PASS=12345
     depends_on:
@@ -204,6 +204,18 @@ services:
       - temporal
     networks:
       - microservice_networks
+
+  zookeeper:
+    image: zookeeper:latest
+    container_name: zookeeper
+    restart: always
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
 
 volumes:
   cache:
